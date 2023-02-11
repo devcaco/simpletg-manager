@@ -5,11 +5,10 @@ const mongoose = require('mongoose');
 // ℹ️ Sets the MongoDB URI for our app to have access to it.
 // If no env has been set, we dynamically set it to whatever the folder name was upon the creation of the app
 
-const MONGODB_URI =
-  process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/simpletg-manager';
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/simpletg-manager';
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGO_URI)
   .then((x) => {
     const databaseName = x.connections[0].name;
     console.log(`Connected to Mongo! Database name: "${databaseName}"`);
@@ -18,4 +17,4 @@ mongoose
     console.error('Error connecting to mongo: ', err);
   });
 
-module.exports = { MONGODB_URI };
+module.exports = { MONGO_URI };

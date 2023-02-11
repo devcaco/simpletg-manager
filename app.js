@@ -2,9 +2,6 @@
 // https://www.npmjs.com/package/dotenv
 require('dotenv').config();
 
-// ℹ️ Connects to the database
-require('./db');
-
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
 const express = require('express');
@@ -15,29 +12,16 @@ const hbs = require('hbs');
 
 const app = express();
 
+// ℹ️ Connects to the database
+app.MONGO_URI = require('./db').MONGO_URI;
+
 // ℹ️ This function is getting exported from the config folder. It runs most pieces of middleware
 require('./config')(app);
-
-const { MONGODB_URI } = require('./db');
 
 const capitalize = require('./utils/capitalize');
 const projectName = 'simpletg-manager';
 
 app.locals.appTitle = `SIMPLETG MANAGER`;
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 600000,
-    },
-    store: MongoStore.create({
-      mongoUrl: MONGODB_URI,
-    }),
-  })
-);
 
 // 👇 Start handling routes here
 const indexRoutes = require('./routes/index.routes');
@@ -48,4 +32,5 @@ app.use('/auth', authRoutes);
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require('./error-handling')(app);
 
+console.log({ MONGO_URI: process.env.MONGODB_URI });
 module.exports = app;
