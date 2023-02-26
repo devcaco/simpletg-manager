@@ -1,12 +1,23 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 // TODO: Please make sure you edit the User model to whatever makes sense in this case
-const userSchema = new Schema(
+const superUserSchema = new Schema(
   {
-    username: {
+    company: {
       type: String,
-      required: false,
+      required: true,
       unique: true,
+      trim: true,
+    },
+    fname: {
+      type: String,
+      required: true,
+      unique: false,
+      trim: true,
+    },
+    lname: {
+      type: String,
+      required: true,
       trim: true,
     },
     email: {
@@ -27,6 +38,6 @@ const userSchema = new Schema(
   }
 );
 
-const User = model("User", userSchema);
+const SuperUser = model('User', superUserSchema);
 
-module.exports = User;
+module.exports = SuperUser;

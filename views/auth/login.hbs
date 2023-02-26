@@ -1,3 +1,265 @@
-<section class='container_fluid vh-100 bg-light'>
-    <div class="card bg-white rounded w-50" style="max-width: 50rem"></div>
+<section class='main__container-login'>
+  <div class='main__container--login-box'>
+    <div class='main__container--login--box-left'>
+      <div>
+        <img src='../../images/login-bg-2.png' alt='Login' />
+      </div>
+      {{#if error}}
+    <div>
+
+    </div>
+      {{/if}}
+    </div>
+    <div class='main__container--login--box-right'>
+      <div class='main__container--login--box--right-header'>
+        <ul class='nav nav-pills mb-3 mt-5' id='pills-tab' role='tablist'>
+          <li class='nav-item' role='presentation'>
+            <button
+              class='nav-link 
+              {{#if login }} 
+              active 
+              {{/if}}'
+              id='pills-login-tab'
+              data-bs-toggle='pill'
+              data-bs-target='#pills-login'
+              type='button'
+              role='tab'
+              aria-controls='pills-login'
+              aria-selected='true'
+              style='width:150px;'
+            >Login</button>
+          </li>
+          <li class='nav-item' role='presentation'>
+            <button
+              class='nav-link {{#if signup }} active {{/if}}'
+              id='pills-signup-tab'
+              data-bs-toggle='pill'
+              data-bs-target='#pills-signup'
+              type='button'
+              role='tab'
+              aria-controls='pills-signup'
+              aria-selected='false'
+              style='width:150px;'
+            >Sign-Up</button>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <div class='tab-content' id='myTabContent'>
+          <div
+            class='tab-pane fade {{#if login }} show active {{/if}}'
+            id='pills-login'
+            role='tabpanel'
+            aria-labelledby='pills-login-tab'
+            tabindex='0'
+          >
+            <form action='' method='post'>
+            <input type="hidden" name="method" value="login" />
+
+            <div style="min-height:30px;">
+                {{#if registered}}
+                <div class="alert alert-success" style="padding:10px" role="alert">
+                    Sign-up Successful! You can now login!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {{/if}}
+            </div>
+
+              <div class='input-group mb-4'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-email'
+                  style='width:100px;'
+                >Email</span>
+                <input
+                  type='email'
+                  name="email"
+                  id='email'
+                  class='form-control'
+                  aria-label='email-username'
+                  aria-describedby='inputGroup-email'
+                  required
+                />
+              </div>
+              <div class='input-group mb-5'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-pwd'
+                  style='width:100px;'
+                >Password</span>
+                <input
+                  type='password'
+                  name="password"
+                  id="password"
+                  class='form-control'
+                  aria-label='pwd'
+                  aria-describedby='inputGroup-pwd'
+                  required
+                />
+              </div>
+              <div class='mb-4'>
+                <input
+                  class='form-check-input'
+                  type='checkbox'
+                  value='true'
+                  name="rememberMe"
+                  id='rememberMe'
+                />
+                <label class='form-check-label' for='flexCheckDefault'>
+                  Remember Me
+                </label>
+              </div>
+              <div>
+                <button
+                  type='submit'
+                  class='btn btn-secondary'
+                  style='width:100%'
+                >Login</button>
+              </div>
+            </form>
+          </div>
+          <div
+            class='tab-pane fade {{#if signup }} show active {{/if}}'
+            id='pills-signup'
+            role='tabpanel'
+            aria-labelledby='pills-signup-tab'
+            tabindex='0'
+          >
+            <form action='' method='post'>
+                <input type="hidden" name="method" value="signup" />
+              <div class='input-group input-group-sm mb-4 mt-2'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-company'
+                  style='width:100px;'
+                >Company</span>
+                <input
+                  type='text'
+                  name='signup-company'
+                  id='signup-company'
+                  value="{{form.company}}"
+                  class='form-control'
+                  aria-label='input-company-name'
+                  aria-describedby='inputGroup-company'
+                  required
+                />
+              </div>
+              <div class='input-group input-group-sm mb-2'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-fname'
+                  style='width:100px;'
+                >First Name</span>
+                <input
+                  type='text'
+                  name='signup-fname'
+                  id='signup-fname'
+                  value="{{form.fname}}"
+                  class='form-control'
+                  aria-label='input-first-name'
+                  aria-describedby='inputGroup-fname'
+                  required
+                />
+              </div>
+              <div class='input-group input-group-sm mb-3'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-lname'
+                  style='width:100px;'
+                >Last Name</span>
+                <input
+                  type='text'
+                  name='signup-lname'
+                  id='signup-lname'
+                  value="{{form.lname}}"
+                  class='form-control'
+                  aria-label='input-last-name'
+                  aria-describedby='inputGroup-lname'
+                  required
+                />
+              </div>
+              <div class='input-group input-group-sm mb-2'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-email'
+                  style='width:100px;'
+                >E-mail</span>
+                <input
+                  type='email'
+                  name='signup-email'
+                  id='signup-email'
+                  value="{{form.email}}"
+                  class='form-control'
+                  aria-label='input-email-address'
+                  aria-describedby='inputGroup-email'
+                  required
+                />
+              </div>
+              <div class='input-group input-group-sm mb-2'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-password'
+                  style='width:100px;'
+                >Password</span>
+                <input
+                  type='password'
+                  name='signup-password'
+                  id='signup-password'
+                  class='form-control'
+                  aria-label='input-password-1'
+                  aria-describedby='inputGroup-password'
+                  required
+                  oninput='check()'
+                />
+              </div>
+              <div class='input-group input-group-sm mb-4'>
+                <span
+                  class='input-group-text'
+                  id='inputGroup-password2'
+                  style='width:100px;'
+                >Confirm Pwd</span>
+                <input
+                  type='password'
+                  name='signup-password-2'
+                  id='signup-password-2'
+                  class='form-control'
+                  aria-label='input-password-2'
+                  aria-describedby='inputGroup-password2'
+                  required
+                  oninput='check()'
+                />
+              </div>
+              <div class="d-flex align-items-center">
+                <button
+                  type='submit'
+                  class='btn btn-secondary'
+                  style='width:100%'
+                >Signup</button>
+                {{#if error}}
+                <i class="fa-solid fa-triangle-exclamation" style="margin-left:10px; font-size:2rem; color:red" onclick="showErrors();"></i>
+                {{/if}}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{{#if error}}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+    {{#each errorMsg}}
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+        <strong class="me-auto">Error</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+        {{this}}
+        </div>
+    </div>
+    {{/each}}
+
+</div>
+{{/if}}
 </section>

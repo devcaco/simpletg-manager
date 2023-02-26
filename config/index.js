@@ -13,6 +13,8 @@ const cookieParser = require('cookie-parser');
 // https://www.npmjs.com/package/serve-favicon
 const favicon = require('serve-favicon');
 
+const flash = require('connect-flash');
+
 // ℹ️ global package used to `normalize` paths amongst different operating systems
 // https://www.npmjs.com/package/path
 const path = require('path');
@@ -63,4 +65,5 @@ module.exports = (app) => {
       }),
     })
   );
+  app.use(flash());
 };
