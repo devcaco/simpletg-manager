@@ -208,7 +208,28 @@ body {
   min-height: 100vh;
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.main__container--login-leftBg {
+  width:50vw;
+  background-color:#c9c9c9;
+  min-height: 100vh;
+}
+
+.main__container--login-rightBg {
+  width:50vw;
+  background-color:#fff;
+  min-height: 100vh;
+}
+
+.main__container--login-boxContainer {
+  position: absolute;
+  width:100%;
+  min-height: 100vh;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -220,6 +241,7 @@ body {
   border-radius: 50px;
   display: flex;
   overflow: hidden;
+  /* display: none; */
 }
 
 .main__container--login--box-left {
@@ -235,7 +257,7 @@ body {
 }
 
 .main__container--login--box-left img {
-  height: 300px;
+  height: 200px;
 }
 .main__container--login--box-right {
   width: 50%;
