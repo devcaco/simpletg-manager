@@ -2,7 +2,15 @@
   <div class='main__container--right--users-header'>
     <div>Users</div>
     <div>
-      <button type='button' class='btn btn-primary'>Add New User</button>
+      <button
+        type='button'
+        class='btn btn-secondary'
+        data-bs-toggle='modal'
+        data-bs-target='#usersModal'
+        data-bs-whatever='@getbootstrap'
+      >
+        Add New User
+      </button>
     </div>
 
   </div>
@@ -12,43 +20,136 @@
         <tr>
           <th scope='col'>#</th>
           <th scope='col'>Full Name</th>
+          <th scope='col'>Role</th>
           <th scope='col'>Email</th>
           <th scope='col'>Last Login</th>
-          <th scope='col' style="width:80px;"></th>
+          <th scope='col' style='width:80px;'></th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>1</td>
-          <td>Carlos Ernesto Sosa Morasso </td>
-          <td>cesosa@gmail.com</td>
-          <td>2/22/23 8:34:00 pm</td>
-          <td>
-            <i class="fa-regular fa-pen-to-square"></i>
-            <i class='fa-solid fa-trash'></i>
-          </td>
+          <td>{{superAdmin.fname}} {{superAdmin.lname}}</td>
+          <td>Super Admin</td>
+          <td>{{superAdmin.email}}</td>
+          <td>{{superAdmin.lastLogin}}</td>
+          <td>&nbsp;</td>
         </tr>
-        <tr>
-          <td>2</td>
-          <td>Gustavo Michael </td>
-          <td>gustavomichael@gmail.com</td>
-          <td>2/22/23 8:33:21 am</td>
-          <td>
-            <i class="fa-regular fa-pen-to-square"></i>
-            <i class='fa-solid fa-trash'></i>
-          </td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Valentina Gimenez </td>
-          <td>valentinagimenez@gmail.com</td>
-          <td>2/22/23 5:33:12 pm</td>
-          <td>
-            <i class="fa-regular fa-pen-to-square"></i>
-            <i class='fa-solid fa-trash'></i>
-          </td>
-        </tr>
+        {{#each users}}
+          <tr>
+            <td>{{math @index '+' 2}}</td>
+            <td>{{this.fname}} {{this.lname}}</td>
+            <td>{{this.role}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.lastLogin}}</td>
+            <td>
+              <a href='../users/{{this._id}}' style='color:unset'><i
+                  class='fa-regular fa-pen-to-square'
+                ></i></a>
+              <i
+                class='fa-solid fa-trash'
+                style='cursor:pointer'
+                onclick="deleteUser('{{this._id}},{{this.fname}} {{this.lname}}');"
+              ></i>
+              <i class='fa-solid fa-key' style="cursor:pointer" onclick="resetUserPwd('{{this._id}},{{this.fname}} {{this.lname}}')"></i>
+            </td>
+          </tr>
+        {{/each}}
       </tbody>
     </table>
+  </div>
+</div>
+
+{{> usersForm}}
+{{> usersPwd}}
+
+{{#if error}}
+  <div class='toast-container position-fixed bottom-0 end-0 p-3'>
+
+    {{#each errorMsg}}
+      <div
+        id='liveToast'
+        class='toast text-bg-danger border-0'
+        role='alert'
+        aria-live='assertive'
+        aria-atomic='true'
+      >
+        <div class='toast-header'>
+          <strong class='me-auto'>Error</strong>
+          <button
+            type='button'
+            class='btn-close'
+            data-bs-dismiss='toast'
+            aria-label='Close'
+          ></button>
+        </div>
+        <div class='toast-body'>
+          {{this}}
+        </div>
+      </div>
+    {{/each}}
+
+  </div>
+  <script type='text/javascript'>
+    document.addEventListener('DOMContentLoaded', () => { const userModal =
+    document.querySelector('#usersModal'); const modal = new
+    bootstrap.Modal(userModal); modal.show(); });
+  </script>
+{{/if}}
+
+{{#if edit}}
+  {{! prettier-ignore }}
+  <script type='text/javascript'>
+    document.addEventListener('DOMContentLoaded', () => { 
+        const userModal = document.querySelector('#usersModal'); 
+        const modal = new bootstrap.Modal(userModal); 
+        modal.show();
+        
+        userModal.addEventListener('hidden.bs.modal',(e) => { 
+            console.log('Modal Hidden!!!!!!!') 
+            window.location.href = '../users' }) 
+        });
+  </script>
+{{/if}}
+
+<!-- Modal -->
+<div
+  class='modal fade'
+  id='userDelAlert'
+  tabindex='-1'
+  aria-labelledby='userDelAlertLabel'
+  aria-hidden='true'
+>
+  <div class='modal-dialog modal-dialog-centered'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h1 class='modal-title fs-5' id='userDelAlertLabel'>Confirm
+          delete</h1>
+        <button
+          type='button'
+          class='btn-close'
+          data-bs-dismiss='modal'
+          aria-label='Close'
+        ></button>
+      </div>
+      <div class='modal-body'>
+        <form action='' id='userDeleteForm' method='post'>
+          <input type='hidden' name='userId' id='userDelFormUserId' value='' />
+          Are you sure you want to delete the user:
+          <span class='userDelAlert_username'></span> ?
+        </form>
+      </div>
+      <div class='modal-footer'>
+        <button
+          type='button'
+          class='btn btn-secondary'
+          data-bs-dismiss='modal'
+        >Cancel</button>
+        <button type='submit' form='userDeleteForm' class='btn btn-danger'><i
+            class='fa-solid fa-trash-can'
+          ></i>
+          Delete</button>
+      </div>
+    </div>
   </div>
 </div>

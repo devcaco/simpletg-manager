@@ -31,16 +31,17 @@
         <section class='main__container-sidenav'>
           <div class='main__container--sidenav-logo'>
             <img
-              src='./images/SimpletechGroup_Grey.png'
+              src='../../images/SimpletechGroup_Grey.png'
               alt='Simpletech Group, LLC'
             />
           </div>
           <div class='main__container--sidenav-nav'>
             {{#each navmenu}}
               <ul class="nav flex-column justify-content-center">
+                <!-- prettier-ignore-attribute -->
                 <li class="nav-item d-flex flex-row justify-content-between align-items-center {{#if this.active}} active {{/if}}" style="flex-basis:0;">
                   <i class='{{this.icon}}' style="flex:2"></i>
-                  <a href="{{this.link}}" class="nav-link active align-self-start w-100" style="padding:0;flex:6">{{this.title}}</a>
+                  <a href="../../{{this.link}}" class="nav-link active align-self-start w-100" style="padding:0;flex:6">{{this.title}}</a>
                   <i class='fa-solid fa-angle-right' style="flex:1"></i>
                 </li>
               </ul>
@@ -61,7 +62,7 @@
         <section class='main__container-width'></section>
         <section class='main__container-right'>
           <div class='main__container--right-header'>
-            <div class='main__container--right--header-welcome'>Welcome Carlos</div>
+            <div class='main__container--right--header-welcome'>Welcome {{session.currentUser.fname}} {{session.currentUser.lname}}</div>
           </div>
           <div class='main__container--right-body'>
             {{{body}}}

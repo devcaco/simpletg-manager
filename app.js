@@ -1,7 +1,7 @@
 // ℹ️ Gets access to environment variables/settings
 // https://www.npmjs.com/package/dotenv
 require('dotenv').config();
-
+const path = require('path');
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
 const express = require('express');
@@ -9,32 +9,16 @@ const express = require('express');
 // https://www.npmjs.com/package/hbs
 const hbs = require('hbs');
 
-hbs.registerHelper('ifCond', function (v1, operator, v2, options) {
-  switch (operator) {
-    case '==':
-      return v1 == v2 ? options.fn(this) : options.inverse(this);
-    case '===':
-      return v1 === v2 ? options.fn(this) : options.inverse(this);
-    case '!=':
-      return v1 != v2 ? options.fn(this) : options.inverse(this);
-    case '!==':
-      return v1 !== v2 ? options.fn(this) : options.inverse(this);
-    case '<':
-      return v1 < v2 ? options.fn(this) : options.inverse(this);
-    case '<=':
-      return v1 <= v2 ? options.fn(this) : options.inverse(this);
-    case '>':
-      return v1 > v2 ? options.fn(this) : options.inverse(this);
-    case '>=':
-      return v1 >= v2 ? options.fn(this) : options.inverse(this);
-    case '&&':
-      return v1 && v2 ? options.fn(this) : options.inverse(this);
-    case '||':
-      return v1 || v2 ? options.fn(this) : options.inverse(this);
-    default:
-      return options.inverse(this);
-  }
+hbs.registerHelper('math', function (lvalue, operator, rvalue, options) {
+  lvalue = parseFloat(lvalue);
+  rvalue = parseFloat(rvalue);
+
+  return {
+    '+': lvalue + rvalue,
+  }[operator];
 });
+
+hbs.registerPartials(path.join(__dirname, 'views/partials'));
 
 const app = express();
 
@@ -59,8 +43,11 @@ app.locals.appTitle = `SIMPLETG MANAGER`;
 // 👇 Start handling routes here
 const indexRoutes = require('./routes/index.routes');
 const authRoutes = require('./routes/auth.routes');
+const userRoutes = require('./routes/users.routes');
+
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
 
 app.locals.navmenu = navmenu;
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
