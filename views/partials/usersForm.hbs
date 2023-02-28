@@ -1,4 +1,4 @@
-{{!-- USER MODAL FORM --}}
+{{! USER MODAL FORM }}
 
 <div
   class='modal fade'
@@ -122,6 +122,7 @@
                 class='form-control'
                 aria-label='input-pwd'
                 aria-describedby='inputGroup-pwd'
+                oninput="checkPwdMatch('password','password2');"
                 required
               />
             </div>
@@ -139,6 +140,7 @@
                 class='form-control'
                 aria-label='input-pwd2'
                 aria-describedby='inputGroup-pwd2'
+                oninput="checkPwdMatch('password','password2');"
                 required
               />
             </div>

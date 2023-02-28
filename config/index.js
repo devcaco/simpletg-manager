@@ -27,6 +27,8 @@ const session = require('express-session');
 // https://www.npmjs.com/package/connect-mongo
 const MongoStore = require('connect-mongo');
 
+const { lastSession } = require('../middleware/lastSession');
+
 // Connects the mongo uri to maintain the same naming structure
 // const MONGO_URI2 = 'mongodb://127.0.0.1:27017/simpletg-manager';
 // const { MONGO_URI } = require('../db');
@@ -66,4 +68,5 @@ module.exports = (app) => {
     })
   );
   app.use(flash());
+  app.use(lastSession);
 };

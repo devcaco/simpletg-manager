@@ -1,57 +1,58 @@
-<div class='main__container--right--body-users'>
-  <div class='main__container--right--users-header'>
-    <div>Users</div>
+<div class='main__container--right--body-customers'>
+  <div class='main__container--right--customers-header'>
+    <div>Customers</div>
     <div>
       <button
         type='button'
         class='btn btn-secondary'
         data-bs-toggle='modal'
-        data-bs-target='#usersModal'
-        data-bs-whatever='@getbootstrap'
+        data-bs-target='#customerModal'
       >
-        Add New User
+        Add New Customer
       </button>
     </div>
 
   </div>
-  <div class='main__container--right--body--users-content'>
+  <div class='main__container--right--body--customers-content'>
     <table class='table table-striped'>
       <thead>
         <tr>
           <th scope='col'>#</th>
-          <th scope='col'>Full Name</th>
-          <th scope='col'>Role</th>
+          <th scope='col'>Name</th>
           <th scope='col'>Email</th>
-          <th scope='col'>Last Login</th>
+          <th scope='col'>Type</th>
+          <th scope='col'>Phone Number</th>
           <th scope='col' style='width:80px;'></th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>{{superAdmin.fname}} {{superAdmin.lname}}</td>
-          <td>Super Admin</td>
-          <td>{{superAdmin.email}}</td>
-          <td>{{superAdmin.last_session}}</td>
-          <td>&nbsp;</td>
-        </tr>
-        {{#each users}}
+        {{#each customers}}
           <tr>
-            <td>{{math @index '+' 2}}</td>
-            <td style="cursor:pointer; text-decoration:underline" onclick="window.location.href='../../users/details/{{this._id}}'">{{this.fname}} {{this.lname}}</td>
-            <td>{{this.role}}</td>
+            <td>{{math @index '+' 1}}</td>
+            <td style="cursor:pointer; text-decoration:underline" onclick="window.location.href='../../customers/details/{{this._id}}'">{{this.custName}}</td>
             <td>{{this.email}}</td>
-            <td>{{this.last_session}}</td>
             <td>
-              <a href='../../../users/edit/{{this._id}}' style='color:unset'><i
+              {{this.type}}
+            </td>
+            <td>{{this.phoneNumber.0.number}}</td>
+            <td>
+              <a href='../../../customers/edit/{{this._id}}' style='color:unset'><i
                   class='fa-regular fa-pen-to-square'
                 ></i></a>
               <i
                 class='fa-solid fa-trash'
                 style='cursor:pointer'
-                onclick="deleteUser('{{this._id}},{{this.fname}} {{this.lname}}');"
+                onclick="deleteCustomer('{{this._id}},{{this.custName}}');"
               ></i>
-              <i class='fa-solid fa-key' style="cursor:pointer" onclick="resetUserPwd('{{this._id}},{{this.fname}} {{this.lname}}')"></i>
+              {{#if this.isFavorite}}
+              <a href="../../../customers/favorite/{{this._id}}/false" style="color:red">
+                <i class="fa-solid fa-heart"></i>
+              </a>
+              {{else}}
+              <a href="../../../customers/favorite/{{this._id}}/true" style="color:#000">
+                <i class="fa-regular fa-heart"></i>
+              </a>
+              {{/if}}
             </td>
           </tr>
         {{/each}}
@@ -60,9 +61,8 @@
   </div>
 </div>
 
-{{> usersForm}}
-{{> usersPwd}}
-{{> userDelete}}
+{{> customerForm}}
+{{> customerDelete}}
 
 {{#if error}}
   <div class='toast-container position-fixed bottom-0 end-0 p-3'>
@@ -116,13 +116,13 @@
   {{! prettier-ignore }}
   <script type='text/javascript'>
     document.addEventListener('DOMContentLoaded', () => { 
-        const userModal = document.querySelector('#usersModal'); 
-        const modal = new bootstrap.Modal(userModal); 
+        const customerModal = document.querySelector('#customerModal'); 
+        const modal = new bootstrap.Modal(customerModal); 
         modal.show();
         
-        userModal.addEventListener('hidden.bs.modal',(e) => { 
+        customerModal.addEventListener('hidden.bs.modal',(e) => { 
             console.log('Modal Hidden!!!!!!!') 
-            window.location.href = '../../../users' }) 
+            window.location.href = '../../../customers' }) 
         });
   </script>
 {{/if}}
@@ -136,9 +136,9 @@
         modal.show();
         
         userDetailsModal.addEventListener('hidden.bs.modal',(e) => { 
-            window.location.href = '../../../users' }) 
+            window.location.href = '../../../customers' }) 
         });
   </script>
 {{/if}}
 
-{{> userDetails}}
+{{> customerDetails}}

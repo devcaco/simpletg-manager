@@ -44,10 +44,12 @@ app.locals.appTitle = `SIMPLETG MANAGER`;
 const indexRoutes = require('./routes/index.routes');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/users.routes');
+const customerRoutes = require('./routes/customers.routes');
 
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
+app.use('/customers', customerRoutes);
 
 app.locals.navmenu = navmenu;
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes

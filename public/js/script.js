@@ -18,6 +18,20 @@ function deleteUser(user) {
   userDelFormUserId.value = user.split(',')[0];
 }
 
+function deleteCustomer(customer) {
+  console.log({ customer });
+
+  const customerDelForm = document.querySelector('#customerDeleteForm');
+  const customerDelFormCustomerId = document.querySelector('#customerDelFormCustomerId');
+  const customerDelAlert = document.querySelector('.customerDelAlert_customer');
+  customerDelAlert.innerHTML = customer.split(',')[1];
+  const customerDelAlertModal = document.querySelector('#customerDelAlert');
+  const modal = new bootstrap.Modal(customerDelAlertModal);
+  modal.show();
+  customerDelForm.action = '../customers/delete/';
+  customerDelFormCustomerId.value = customer.split(',')[0];
+}
+
 const toastElList = document.querySelectorAll('.toast');
 const option = '';
 const toastList = [...toastElList].map((toastEl) =>
@@ -43,13 +57,14 @@ function resetUserPwd(user) {
   userPwdUsername.value = user.split(',')[1];
 }
 
-function check() {
-  console.log('Checking Password Match');
-  var input = document.getElementById('signup-password-2');
-  if (input.value != document.getElementById('signup-password').value) {
-    input.setCustomValidity('Passwords Must Match');
+function checkPwdMatch(pwdField1, pwdField2) {
+  const input1 = document.querySelector(`#${pwdField1}`);
+  const input2 = document.querySelector(`#${pwdField2}`);
+  
+  if (input2.value !== input1.value) {
+    input2.setCustomValidity('Passwords Must Match');
   } else {
     // input is valid -- reset the error message
-    input.setCustomValidity('');
+    input2.setCustomValidity('');
   }
 }

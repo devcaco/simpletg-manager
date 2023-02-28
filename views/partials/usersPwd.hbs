@@ -22,7 +22,12 @@
       </div>
       <div class='modal-body'>
         <form action='../../users/pwd' method='post' id='usersPwdForm'>
-          <input type='hidden' name='userId' value='' id='userPwdIdField' />
+          <input
+            type='hidden'
+            name='userId'
+            value='{{form.userId}}'
+            id='userPwdIdField'
+          />
           <div class='input-group input-group-sm mb-3'>
             <span
               class='input-group-text'
@@ -32,8 +37,9 @@
             <input
               type='text'
               id='pwdUsernameField'
+              name='username'
               readonly
-              value=""
+              value='{{form.username}}'
               class='form-control form-control-plaintext'
               aria-label='input-pwd-username'
               aria-describedby='inputGroup-pwdUsername'
@@ -70,6 +76,7 @@
               aria-label='input-user-password2'
               aria-describedby='inputGroup-password2'
               required
+              oninput="checkPwdMatch('pwd','pwd2');"
             />
           </div>
         </form>

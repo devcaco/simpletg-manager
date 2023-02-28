@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const navmenu = require('../utils/navigation');
+const Customer = require('../models/Customer.model');
 
 const isLoggedOut = require('../middleware/isLoggedOut');
 const isLoggedIn = require('../middleware/isLoggedIn');
@@ -10,10 +11,19 @@ router.get('/', isLoggedIn, (req, res, next) => {
   res.render('index');
 });
 
-router.get('/dashboard', isLoggedIn, (req, res, next) => {
+router.get('/dashboard', isLoggedIn, async (req, res, next) => {
   navmenu.forEach((elem) => (elem.active = elem.title === 'Dashboard'));
-  console.log({ navmenu });
-  res.render('dashboard');
+  try {
+    const lastSessions = req.session.currentUser.sessions;
+
+    const customers = await Customer.find({ isFavorite: true }).limit(5);
+
+    console.log({ dashFavoritesCustomers: customers });
+    res.render('dashboard', { lastSessions, customers });
+  } catch (err) {
+    console.log({ Error: err });
+    next(err);
+  }
 });
 
 module.exports = router;

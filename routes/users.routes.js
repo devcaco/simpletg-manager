@@ -11,6 +11,7 @@ const saltRounds = 10;
 // Require the User model in order to interact with the database
 const Entity = require('../models/Entity.model');
 const User = require('../models/User.model');
+const Session = require('../models/UserSession.model');
 
 // Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
 const isLoggedOut = require('../middleware/isLoggedOut');
@@ -26,12 +27,8 @@ const rolesOptions = [
 router.get('/', isLoggedIn, async (req, res, next) => {
   navmenu.forEach((elem) => (elem.active = elem.title === 'Users'));
 
-  const users = await User.find({
-    entity: req.session.entity._id,
-    role: { $ne: 'Super Admin' },
-  });
+  const users = await getUsers(req);
 
-  console.log({ users });
   res.render('users', {
     superAdmin: req.session.superAdmin,
     users,
@@ -39,11 +36,8 @@ router.get('/', isLoggedIn, async (req, res, next) => {
   });
 });
 
-router.get('/:id', isLoggedIn, async (req, res, next) => {
-  const users = await User.find({
-    entity: req.session.entity._id,
-    role: { $ne: 'Super Admin' },
-  });
+router.get('/edit/:id', isLoggedIn, async (req, res, next) => {
+  const users = await getUsers(req);
 
   try {
     let user = '';
@@ -68,9 +62,43 @@ router.get('/:id', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get('/details/:id', isLoggedIn, async (req, res, next) => {
+  const users = await getUsers(req);
+  const errorMsg = [];
+  const userId = req.params.id;
+  try {
+    console.log('GETTING USERS DETAILS');
+    if (!userId) errorMsg.push('No user ID provided');
+    const user = await User.findById(userId);
+    if (!user) errorMsg.push('No user found with that ID');
+
+    if (errorMsg.length) throw new Error(errorMsg);
+
+    res.render('users', {
+      details: true,
+      user: {
+        _id: user._id,
+        fname: user.fname,
+        lname: user.lname,
+        email: user.email,
+        role: user.role,
+        updatedAt: user.updatedAt.toLocaleString(),
+        createdAt: user.createdAt.toLocaleString(),
+      },
+      users,
+      superAdmin: req.session.superAdmin,
+    });
+  } catch (err) {
+    console.log({ error: err });
+
+    next(err);
+  }
+});
+
 router.post('/delete', isLoggedIn, async (req, res, next) => {
   const userId = req.body.userId;
   const errorMsg = [];
+  const users = await getUsers(req);
 
   try {
     console.log('Deleting User');
@@ -90,8 +118,9 @@ router.post('/delete', isLoggedIn, async (req, res, next) => {
 });
 
 router.post('/pwd', isLoggedIn, async (req, res, next) => {
-  const { userId, password, password2 } = req.body;
+  const { userId, password, password2, username } = req.body;
   const errorMsg = [];
+  const users = await getUsers(req);
 
   try {
     console.log('Resetting Pwd');
@@ -99,6 +128,12 @@ router.post('/pwd', isLoggedIn, async (req, res, next) => {
 
     if (!password || !password2) errorMsg.push('Required Fields are empty');
     if (password !== password2) errorMsg.push('Passwords do not match');
+
+    if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(password)) {
+      errorMsg.push(
+        'Password must be at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.'
+      );
+    }
 
     const user = await User.findById(userId);
 
@@ -120,17 +155,21 @@ router.post('/pwd', isLoggedIn, async (req, res, next) => {
     console.log({ error: err });
     if (!errorMsg.length) errorMsg.push(err.message);
 
-    res.status(500).render('users', { error: true, errorMsg });
+    res.status(500).render('users', {
+      error: true,
+      errorMsg,
+      pwd: true,
+      users,
+      superAdmin: req.session.superAdmin,
+      form: { userId, username },
+    });
   }
 });
 
-router.post('/:id', isLoggedIn, async (req, res, next) => {
+router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
   const { userId, fname, lname, email, role } = req.body;
   const errorMsg = [];
-  const users = await User.find({
-    entity: req.session.entity._id,
-    role: { $ne: 'Super Admin' },
-  });
+  const users = await getUsers(req);
 
   try {
     console.log('Updating User Information');
@@ -192,10 +231,7 @@ router.post('/:id', isLoggedIn, async (req, res, next) => {
 router.post('/', isLoggedIn, async (req, res, next) => {
   const { fname, lname, email, password, password2, role } = req.body;
   const errorMsg = [];
-  const users = await User.find({
-    entity: req.session.entity._id,
-    role: { $ne: 'Super Admin' },
-  });
+  const users = await getUsers(req);
   try {
     console.log('Adding new User');
     console.log({ body: req.body });
@@ -264,5 +300,26 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     });
   }
 });
+
+const getUsers = async (req) => {
+  const users = await User.find({
+    entity: req.session.entity._id,
+    role: { $ne: 'Super Admin' },
+  }).populate({
+    path: 'sessions',
+    options: {
+      sort: { date_login: 'desc' },
+      limit: 5,
+    },
+  });
+
+  users.forEach((user) => {
+    if (user.sessions.length)
+      user.last_session = user.sessions[0].date_login.toLocaleString();
+    else user.last_session = 'None';
+  });
+
+  return users;
+};
 
 module.exports = router;

@@ -5,12 +5,16 @@ const router = express.Router();
 const bcryptjs = require('bcryptjs');
 const mongoose = require('mongoose');
 
+const { getUserLocale } = require('get-user-locale');
+const geoip = require('geoip-lite');
+
 // How many rounds should bcrypt run the salt (default - 10 rounds)
 const saltRounds = 10;
 
 // Require the User model in order to interact with the database
 const Entity = require('../models/Entity.model');
 const User = require('../models/User.model');
+const UserSession = require('../models/UserSession.model');
 
 // Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
 const isLoggedOut = require('../middleware/isLoggedOut');
@@ -100,7 +104,15 @@ router.post('/login/:method?', isLoggedOut, async (req, res, next) => {
 
       if (errorMsg.length) throw new Error(errorMsg);
 
-      const user = await User.findOne({ email }).populate('entity');
+      const user = await User.findOne({ email })
+        .populate('entity')
+        .populate({
+          path: 'sessions',
+          options: {
+            sort: { date_login: 'desc' },
+            limit: 5,
+          },
+        });
 
       console.log({ user });
 
@@ -110,16 +122,42 @@ router.post('/login/:method?', isLoggedOut, async (req, res, next) => {
 
       if (!pwdOk) throw new Error('Password is invalid');
 
+      const superAdmin = await User.findOne({
+        entity: user.entity,
+        role: 'Super Admin',
+      }).populate({
+        path: 'sessions',
+        options: {
+          sort: { date_login: 'desc' },
+          limit: 5,
+        },
+      });
+
+      if (superAdmin.sessions.length)
+        superAdmin.last_login =
+          superAdmin.sessions[
+            superAdmin.sessions.length - 1
+          ].date_login.toLocaleDateString();
+      else superAdmin.last_login = 'None';
+
       req.session.currentUser = user;
-      req.session.roles = {
+      req.session.role = {
         superAdmin: user.role === 'Super Admin',
         Admin: user.role === 'Admin',
         User: user.role === 'User',
       };
       req.session.entity = user.entity;
-      req.session.superAdmin = await User.findOne({
-        entity: user.entity,
-        role: 'Super Admin',
+      req.session.superAdmin = superAdmin;
+
+      const geo = geoip.lookup(req.headers['x-forwarded-for'] || req.ip);
+
+      const saveNewSession = await UserSession.create({
+        user: user._id,
+        date_login: new Date(),
+        system_info: req.headers['user-agent'],
+        user_locale: getUserLocale(),
+        ip_address: req.headers['x-forwarded-for'] || req.ip,
+        geo_info: geo,
       });
 
       res.redirect('/dashboard');
