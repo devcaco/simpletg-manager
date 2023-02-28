@@ -33,6 +33,7 @@ router.get('/', isLoggedIn, async (req, res, next) => {
     superAdmin: req.session.superAdmin,
     users,
     rolesOptions,
+    flashMessages: req.flash('userFlash'),
   });
 });
 
@@ -108,6 +109,7 @@ router.post('/delete', isLoggedIn, async (req, res, next) => {
     const delUser = await User.findByIdAndDelete(userId);
 
     if (errorMsg.length) throw new Error(errorMsg);
+    req.flash('userFlash', 'The user was successfully deleted');
     res.redirect('../../users');
   } catch (err) {
     console.log({ error: err });
@@ -149,7 +151,7 @@ router.post('/pwd', isLoggedIn, async (req, res, next) => {
       { password: hashedPassword },
       { runValidators: true, new: true, context: 'query', unique: true }
     );
-
+    req.flash('userFlash', `The user's password was successfully updated`);
     res.redirect('../../users');
   } catch (err) {
     console.log({ error: err });
@@ -196,6 +198,7 @@ router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
       }
     );
 
+    req.flash('userFlash', `The user was successfully updated`);
     res.redirect('/users');
   } catch (err) {
     console.log({ error: err });
@@ -270,7 +273,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     });
 
     console.log({ data });
-    req.flash('userSaved', 'User was successfully created');
+    req.flash('userFlash', `The user was successfully created`);
     res.redirect('./users');
   } catch (err) {
     console.log({ error: err });

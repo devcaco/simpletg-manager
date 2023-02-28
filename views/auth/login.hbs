@@ -55,10 +55,10 @@
                 <input type="hidden" name="method" value="login" />
                 <div style="min-height:30px;">
                     {{#if registered}}
-                    <div class="alert alert-success" style="padding:10px" role="alert">
-                        Sign-up Successful! You can now login!
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <div>{{registered}}</div>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
                     {{/if}}
                 </div>
                   <div class='input-group mb-4'>
