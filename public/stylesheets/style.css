@@ -256,16 +256,155 @@ body {
 
 .main__container--login--box-left {
   width: 50%;
-  /* background-color: #F2F4F7; */
   background-color: #edeeee;
-  display: flex;
-  /* flex-direction: column; */
   height: 100%;
-  align-items: center;
-  justify-content: center;
+  /* background-color: #F2F4F7; */
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* justify-content: center; */
 }
 
-.main__container--login--box-left img {
+.main__container--login--box--left-infobtn {
+  /* display: inline; */
+  /* position: relative; */
+  /* top: 0; */
+  align-self: flex-start;
+  justify-self: flex-start;
+  position:absolute;
+  /* position: relative; */
+  /* top: -100px; */
+  top:20px;
+  right: 30px;
+  font-size: 1.5rem;
+  color: darkblue;
+  z-index: 100;
+}
+
+.main__container--login--box--left-card {
+  /* position: relative; */
+  /* top:-20px; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform-origin: center right;
+  transition: transform 1s;
+  /* background-color: rebeccapurple; */
+}
+
+.main__container--login--box--left-card.is-flipped {
+  transform: translateX(-100%) rotateY(-180deg);
+}
+
+.main__container--login--box--left--card--back-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #000;
+  padding-bottom: 10px;
+}
+.main__container--login--box--left--card--back-header > .appname {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.main__container--login--box--left--card--back-tech {
+  font-size: .9rem;
+}
+
+.main__container--login--box--left--card--back-tech .title {
+  font-weight: bold;
+}
+
+.card__face {
+  position: absolute;
+  /* width: 100%; */
+  /* height: 100%; */
+  /* line-height: 260px; */
+  /* color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 40px; */
+  backface-visibility: hidden;
+}
+
+.main__container--login--box--left--card-back {
+  transform: rotateY(180deg);
+  /* margin-top: -50px; */
+  /* background-color: blue; */
+  width: 100%;
+  height: 100%;
+  margin-top: 80px;
+  padding: 0 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main__container--login--box--left--card--back-tech {
+  display: flex;
+  /* background-color: red; */
+  justify-content: space-around;
+  /* width: 100%; */
+  border-bottom: 1px solid #000;
+  padding-bottom: 15px;
+}
+
+.github {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  padding-bottom: 20px;
+  font-size: .8rem;
+  gap: 20px;
+  border-bottom: 1px solid #000;
+  /* background-color: rebeccapurple; */
+  width: 100%;
+}
+
+.developed {
+  display: flex;
+  flex-direction: column;
+}
+
+.ironhack
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* background-color: green; */
+  text-align: center;
+  font-size: .9rem;
+}
+
+.ironhack {
+  margin-top: 10px;
+}
+
+.developed > .title,
+.ironhack > .title {
+  font-weight: bold;
+}
+.github img {
+  width: 150px;
+}
+
+.flyio img {
+  width: 100px;
+}
+
+.main__container--login--box--left--card-front img {
+  margin-top: -30px;
   height: 200px;
 }
 .main__container--login--box-right {

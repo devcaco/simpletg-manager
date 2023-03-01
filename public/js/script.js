@@ -2,6 +2,14 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('project-simpletg-manager JS imported successfully!');
   console.log(document.querySelector('.toast'));
+  
+  let card = document.querySelector('.main__container--login--box--left-card');
+  let icon = document.querySelector('.info__btn');
+  icon.addEventListener('click', () => {
+    card.classList.toggle('is-flipped');
+    icon.classList.toggle('bi-x-circle');
+    icon.classList.toggle('bi-info-circle');
+  });
 });
 
 function deleteUser(user) {
@@ -16,6 +24,10 @@ function deleteUser(user) {
   modal.show();
   userDelForm.action = '../users/delete/';
   userDelFormUserId.value = user.split(',')[0];
+}
+
+function rotateCard() {
+  
 }
 
 function deleteCustomer(customer) {

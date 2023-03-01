@@ -103,7 +103,9 @@ router.post('/login', isLoggedOut, async (req, res, next) => {
     req.session.entity = user.entity;
     req.session.superAdmin = superAdmin;
 
-    const geo = geoip.lookup(req.headers['x-forwarded-for'] || req.ip);
+    let userIP = req.headers['x-forwarded-for'] || req.ip;
+    userIP = userIP.split(',');
+    const geo = geoip.lookup(userIP[0]);
 
     const saveNewSession = await UserSession.create({
       user: user._id,
@@ -215,7 +217,7 @@ router.post('/login/signup', isLoggedOut, async (req, res, next) => {
 
 function checkLogOff(req, res, next) {
   if (req.query.Off) {
-    req.flash('loginFlash','Sign-Off Successful')
+    req.flash('loginFlash', 'Sign-Off Successful');
   }
   next();
 }
