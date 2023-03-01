@@ -5,7 +5,7 @@ const entitySchema = new Schema(
   {
     name: {
       type: String,
-      required: [true, 'Company name is required'],
+      required: [true, 'Entity name is required'],
       unique: true,
       trim: true,
     },

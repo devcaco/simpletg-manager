@@ -29,7 +29,8 @@
               </li>
               <li class='nav-item' role='presentation'>
                 <button
-                  class='nav-link {{#if signup }} active {{/if}}'
+                  class='nav-link 
+                  {{#if signup }} active {{/if}}'
                   id='pills-signup-tab'
                   data-bs-toggle='pill'
                   data-bs-target='#pills-signup'
@@ -51,12 +52,12 @@
                 aria-labelledby='pills-login-tab'
                 tabindex='0'
               >
-                <form action='' method='post'>
+                <form action='/auth/login' method='post'>
                 <input type="hidden" name="method" value="login" />
                 <div style="min-height:30px;">
-                    {{#if registered}}
+                    {{#if loginFlash}}
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                      <div>{{registered}}</div>
+                      <div>{{loginFlash}}</div>
                       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>
                     {{/if}}
@@ -69,8 +70,8 @@
                     >E-Mail</span>
                     <input
                       type='email'
-                      name="email"
-                      id='email'
+                      name="emailLogin"
+                      id='emailLogin'
                       value="{{form.email}}"
                       class='form-control'
                       aria-label='email-username'
@@ -86,8 +87,8 @@
                     >Password</span>
                     <input
                       type='password'
-                      name="password"
-                      id="password"
+                      name="pwdLogin"
+                      id="pwdLogin"
                       class='form-control'
                       aria-label='pwd'
                       aria-describedby='inputGroup-pwd'
@@ -98,9 +99,9 @@
                     <input
                       class='form-check-input'
                       type='checkbox'
-                      value='true'
                       name="rememberMe"
                       id='rememberMe'
+                      value='true'
                     />
                     <label class='form-check-label' for='flexCheckDefault'>
                       Remember Me
@@ -113,7 +114,9 @@
                       style='width:100%'
                     >Login</button>
                     {{#if error}}
-                    <i class="fa-solid fa-triangle-exclamation" style="margin-left:10px; font-size:2rem; color:red; cursor:pointer" onclick="showErrors();"></i>
+                    {{#if login}}
+                    <i class="fa-solid fa-triangle-exclamation error_triangle" onclick="showErrors();"></i>
+                    {{/if}}
                     {{/if}}
                   </div>
                 </form>
@@ -125,8 +128,8 @@
                 aria-labelledby='pills-signup-tab'
                 tabindex='0'
               >
-                <form action='' method='post'>
-                    <input type="hidden" name="method" value="signup" />
+                <form action='/auth/login/signup' method='post'>
+                  <input type="hidden" name="method" value="signup" />
                   <div class='input-group input-group-sm mb-4 mt-2'>
                     <span
                       class='input-group-text'
@@ -188,7 +191,7 @@
                       type='email'
                       name='signup-email'
                       id='signup-email'
-                      value="{{form.email}}"
+                      value="{{form.emailSignup}}"
                       class='form-control'
                       aria-label='input-email-address'
                       aria-describedby='inputGroup-email'
@@ -236,7 +239,9 @@
                       style='width:100%'
                     >Signup</button>
                     {{#if error}}
-                    <i class="fa-solid fa-triangle-exclamation" style="margin-left:10px; font-size:2rem; color:red; cursor:pointer" onclick="showErrors();"></i>
+                    {{#if signup}}
+                    <i class="fa-solid fa-triangle-exclamation error_triangle" onclick="showErrors();"></i>
+                    {{/if}}
                     {{/if}}
                   </div>
                 </form>
@@ -246,21 +251,4 @@
         </div>
       </div>
   </div>
-{{#if error}}
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-
-    {{#each errorMsg}}
-    <div id="liveToast" class="toast text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-        <strong class="me-auto">Error</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-        {{this}}
-        </div>
-    </div>
-    {{/each}}
-
-</div>
-{{/if}}
 </section>

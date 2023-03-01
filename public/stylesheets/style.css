@@ -124,8 +124,6 @@ body {
 }
 
 .main__container--right-header {
-  width: 100%;
-  display: flex;
   height: 230px;
   background-color: #ff5e00db;
   border-bottom-left-radius: 20px;
@@ -296,4 +294,10 @@ body {
   margin: 10px 0;
   display: flex;
   align-items: center;
+}
+.error_triangle {
+  margin-left: 10px;
+  font-size: 2rem;
+  color: red;
+  cursor: pointer;
 }

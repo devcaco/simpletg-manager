@@ -20,112 +20,47 @@ const UserSession = require('../models/UserSession.model');
 const isLoggedOut = require('../middleware/isLoggedOut');
 const isLoggedIn = require('../middleware/isLoggedIn');
 
-// POST /auth/signup
-router.post('/login/:method?', isLoggedOut, async (req, res, next) => {
-  if (req.body.method === 'signup') {
-    console.log('REGISTERING NEW ENTITY');
-    let errorMsg = [];
-    const {
-      'signup-entity': entity,
-      'signup-fname': fname,
-      'signup-lname': lname,
-      'signup-email': email,
-      'signup-password': password,
-    } = req.body;
-    try {
-      // Check required fields are provided
-      if (
-        entity === '' ||
-        email === '' ||
-        fname === '' ||
-        lname === '' ||
-        password === ''
-      ) {
-        errorMsg.push(
-          'All fields are mandatory. Please fill out all the fields.'
-        );
-      }
+router.get('/login/:method?', isLoggedOut, checkLogOff, (req, res) => {
+  if (req.params.method === 'signup')
+    res.render('auth/login', { signup: true });
+  else {
+    res.render('auth/login', {
+      login: true,
+      loginFlash: req.flash('loginFlash'),
+    });
+  }
+});
 
-      if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(password)) {
-        errorMsg.push(
-          'Password must be at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.'
-        );
-      }
-
-      if (errorMsg.length) throw new Error(errorMsg);
-
-      const salt = await bcryptjs.genSalt(saltRounds);
-      const hashedPassword = await bcryptjs.hash(password, salt);
-
-      console.log({ salt, hashedPassword });
-
-      let newEntity = await Entity.create({ name: entity });
-      let newUser = await User.create({
-        entity: newEntity._id,
-        fname,
-        lname,
-        email,
-        role: 'Super Admin',
-        password: hashedPassword,
-      });
-
-      console.log({ newUser });
-      req.flash('registered', 'Signup Successful, you can now login');
-      res.redirect('/auth/login');
-    } catch (err) {
-      if (err instanceof mongoose.Error.ValidationError) {
-        errorMsg.push(err.message);
-      }
-      if (err.code === 11000) {
-        errorMsg.push(
-          'E-Mail Address and Company Name must be unique. Either the Company or E-Mail is in use'
-        );
-      }
-      if (!errorMsg.length) {
-        errorMsg.push('Unknown Error');
-      }
-      console.log({ error: errorMsg });
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log({ Error: err });
       res.status(500).render('auth/login', {
-        signup: true,
+        login: true,
         error: true,
-        errorMsg,
-        form: { entity, fname, lname, email },
+        errorMsg: err,
       });
+      return;
     }
-  } else {
-    //LOGIN POST
+    //req.flash('loginFlash', 'You have successfully logged-off');
+    res.redirect('/auth/login?Off=true');
+  });
+});
+
+router.post('/login', isLoggedOut, async (req, res, next) => {
+  const errorMsg = [];
+  const { emailLogin: email, pwdLogin: password, rememberMe } = req.body;
+
+  try {
     console.log('LOGGING IN');
-    let errorMsg = [];
-    const { email, password, rememberMe } = req.body;
-    try {
-      if (!email) errorMsg.push('Validation Error: E-Mail cannot be empty!');
-      if (!password)
-        errorMsg.push('Validation Error: Password cannot be empty!');
+    if (!email) errorMsg.push('Validation Error: E-Mail cannot be empty!');
+    if (!password) errorMsg.push('Validation Error: Password cannot be empty!');
 
-      if (errorMsg.length) throw new Error(errorMsg);
+    if (errorMsg.length) throw new Error(errorMsg);
 
-      const user = await User.findOne({ email })
-        .populate('entity')
-        .populate({
-          path: 'sessions',
-          options: {
-            sort: { date_login: 'desc' },
-            limit: 5,
-          },
-        });
-
-      console.log({ user });
-
-      if (!user) throw new Error('User not found');
-
-      const pwdOk = await bcryptjs.compare(password, user.password);
-
-      if (!pwdOk) throw new Error('Password is invalid');
-
-      const superAdmin = await User.findOne({
-        entity: user.entity,
-        role: 'Super Admin',
-      }).populate({
+    const userData = await User.findOne({ email })
+      .populate('entity')
+      .populate({
         path: 'sessions',
         options: {
           sort: { date_login: 'desc' },
@@ -133,74 +68,160 @@ router.post('/login/:method?', isLoggedOut, async (req, res, next) => {
         },
       });
 
-      if (superAdmin.sessions.length)
-        superAdmin.last_login =
-          superAdmin.sessions[
-            superAdmin.sessions.length - 1
-          ].date_login.toLocaleDateString();
-      else superAdmin.last_login = 'None';
+    if (!userData) throw new Error('User not found');
 
-      req.session.currentUser = user;
-      req.session.role = {
-        superAdmin: user.role === 'Super Admin',
-        Admin: user.role === 'Admin',
-        User: user.role === 'User',
-      };
-      req.session.entity = user.entity;
-      req.session.superAdmin = superAdmin;
+    const user = userData._doc;
+    const pwdOk = await bcryptjs.compare(password, user.password);
 
-      const geo = geoip.lookup(req.headers['x-forwarded-for'] || req.ip);
+    if (!pwdOk) throw new Error('Password is invalid');
 
-      const saveNewSession = await UserSession.create({
-        user: user._id,
-        date_login: new Date(),
-        system_info: req.headers['user-agent'],
-        user_locale: getUserLocale(),
-        ip_address: req.headers['x-forwarded-for'] || req.ip,
-        geo_info: geo,
-      });
+    const superAdminData = await User.findOne({
+      entity: user.entity,
+      role: 'Super Admin',
+    }).populate({
+      path: 'sessions',
+      options: {
+        sort: { date_login: 'desc' },
+        limit: 5,
+      },
+    });
 
-      res.redirect('/dashboard');
-    } catch (err) {
-      console.log({ error: err });
-      if (err.message === 'User not found') errorMsg.push('User not found');
-      if (err.message === 'Password is invalid')
-        errorMsg.push('Password is invalid');
-      if (!errorMsg.length) {
-        errorMsg.push('Unknown Error');
-      }
-      res.status(500).render('auth/login', {
-        login: true,
-        error: true,
-        errorMsg,
-        form: { email },
-      });
+    if (!superAdminData) throw new Error('No SuperAdmin found for the Entity');
+    const superAdmin = superAdminData._doc;
+
+    if (superAdmin.sessions.length)
+      superAdmin.last_login =
+        superAdmin.sessions[0].date_login.toLocaleDateString();
+    else superAdmin.last_login = 'None';
+
+    req.session.currentUser = user;
+    req.session.role = {
+      superAdmin: user.role === 'Super Admin',
+      Admin: user.role === 'Admin',
+      User: user.role === 'User',
+    };
+    req.session.entity = user.entity;
+    req.session.superAdmin = superAdmin;
+
+    const geo = geoip.lookup(req.headers['x-forwarded-for'] || req.ip);
+
+    const saveNewSession = await UserSession.create({
+      user: user._id,
+      date_login: new Date(),
+      system_info: req.headers['user-agent'],
+      user_locale: getUserLocale(),
+      ip_address: req.headers['x-forwarded-for'] || req.ip,
+      geo_info: geo,
+    });
+
+    res.redirect('/dashboard');
+  } catch (err) {
+    console.log({ Error: err });
+
+    if (err.message === 'User not found') errorMsg.push('User not found');
+    if (err.message === 'Password is invalid')
+      errorMsg.push('Password is invalid');
+
+    if (!errorMsg.length) {
+      errorMsg.push(err.message);
     }
-  }
-});
-
-// GET /auth/login
-router.get('/login/:method?', isLoggedOut, (req, res) => {
-  if (req.params.method === 'signup')
-    res.render('auth/login', { signup: true });
-  else {
-    res.render('auth/login', {
+    res.status(500).render('auth/login', {
       login: true,
-      registered: req.flash('registered'),
+      error: true,
+      errorMsg,
+      form: { emailLogin: email },
     });
   }
 });
 
-// GET /auth/logout
-router.post('/logout', isLoggedIn, (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      res.status(500).render('auth/logout', { errorMessage: err.message });
-      return;
+router.post('/login/signup', isLoggedOut, async (req, res, next) => {
+  const errorMsg = [];
+  const {
+    'signup-entity': entity,
+    'signup-fname': fname,
+    'signup-lname': lname,
+    'signup-email': email,
+    'signup-password': password,
+  } = req.body;
+
+  let newEntity = '';
+  let newSuperAdmin = '';
+
+  try {
+    console.log('SIGNING UP NEW ENTITY');
+
+    // Check required fields are provided
+    if (
+      entity === '' ||
+      email === '' ||
+      fname === '' ||
+      lname === '' ||
+      password === ''
+    ) {
+      errorMsg.push(
+        'All fields are mandatory. Please fill out all the fields.'
+      );
     }
 
+    if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(password)) {
+      errorMsg.push(
+        'Password must be at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.'
+      );
+    }
+
+    if (errorMsg.length) throw new Error(errorMsg);
+
+    const salt = await bcryptjs.genSalt(saltRounds);
+    const hashedPassword = await bcryptjs.hash(password, salt);
+
+    newEntity = await Entity.create({ name: entity });
+
+    newUser = await User.create({
+      entity: newEntity,
+      fname,
+      lname,
+      email,
+      role: 'Super Admin',
+      password: hashedPassword,
+    });
+
+    req.flash('loginFlash', 'Signup Successful, you can now login');
     res.redirect('/auth/login');
-  });
+  } catch (err) {
+    console.log({ Error: JSON.stringify(err) });
+
+    if (newEntity) await Entity.findByIdAndDelete(newEntity);
+
+    if (err instanceof mongoose.Error.ValidationError) {
+      errorMsg.push(err.message);
+    }
+    if (err.code === 11000) {
+      errorMsg.push(
+        'E-Mail Address and Company Name must be unique. Either the Company or E-Mail is in use'
+      );
+    }
+    if (!errorMsg.length) {
+      errorMsg.push(err.message);
+    }
+
+    res.status(500).render('auth/login', {
+      signup: true,
+      error: true,
+      errorMsg,
+      form: { entity, fname, lname, emailSignup: email },
+    });
+  }
+});
+
+function checkLogOff(req, res, next) {
+  if (req.query.Off) {
+    req.flash('loginFlash','Sign-Off Successful')
+  }
+  next();
+}
+
+router.get('/*', (req, res, next) => {
+  res.redirect('/login');
 });
 
 module.exports = router;

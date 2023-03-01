@@ -62,7 +62,12 @@
         <section class='main__container-width'></section>
         <section class='main__container-right'>
           <div class='main__container--right-header'>
-            <div class='main__container--right--header-welcome'>Welcome {{session.currentUser.fname}} {{session.currentUser.lname}}</div>
+            <div class="row">
+              <div class="col">
+                  <div class='main__container--right--header-welcome'>Welcome {{session.currentUser.fname}} {{session.currentUser.lname}}</div>
+              </div>
+              <div class="col"></div>
+            </div>
           </div>
           <div class='main__container--right-body'>
             {{{body}}}
@@ -71,6 +76,27 @@
         {{/unless}}
       {{/unless}}
     </div>
+
+
+
+
+    {{#if error}}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+        {{#each errorMsg}}
+        <div id="liveToast" class="toast text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            {{this}}
+            </div>
+        </div>
+        {{/each}}
+
+    </div>
+    {{/if}}
     <script
       src='https://kit.fontawesome.com/61787d92cf.js'
       crossorigin='anonymous'
