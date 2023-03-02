@@ -1,0 +1,138 @@
+{{! USER MODAL FORM }}
+
+<div
+  class="modal fade"
+  id="usersProfileModal"
+  tabindex="-1"
+  aria-labelledby="usersProfileModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="usersProfileModalLabel">
+          Edit User Profile
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="/users/edit/profile" method="post" id="usersProfileForm" enctype="multipart/form-data" onsubmit="saveUserProfile(event);">
+          <input
+            type="hidden"
+            name="userId"
+            value="{{session.currentUser._id}}"
+          />
+          <div class="input-group input-group-sm mb-3">
+            <label
+              class="input-group-text"
+              for="inputGroup-uRole"
+              style="width: 100px"
+              >Role</label
+            >
+            <input
+              type="text"
+              name="role"
+              id="uRole"
+              value="{{session.currentUser.role}}"
+              class="form-control form-control-plaintext"
+              aria-label="input-uRole"
+              aria-describedby="inputGroup-uRole"
+              readonly
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-Ufname"
+              style="width: 100px"
+              >First Name</span
+            >
+            <input
+              type="text"
+              name="fname"
+              id="Ufname"
+              value="{{session.currentUser.fname}}"
+              class="form-control"
+              aria-label="input-user-first-name"
+              aria-describedby="inputGroup-Ufname"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-Ulname"
+              style="width: 100px"
+              >Last Name</span
+            >
+            <input
+              type="text"
+              name="lname"
+              id="Ulname"
+              value="{{session.currentUser.lname}}"
+              class="form-control"
+              aria-label="input-user-last-name"
+              aria-describedby="inputGroup-Ulname"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-Uemail"
+              style="width: 100px"
+              >E-Mail</span
+            >
+            <input
+              type="email"
+              name="email"
+              id="Uemail"
+              value="{{session.currentUser.email}}"
+              class="form-control"
+              aria-label="input-user-email"
+              aria-describedby="inputGroup-Uemail"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-Uemail"
+              style="width: 100px"
+              >Picture</span
+            >
+            <input type="file" name='profilePicture' class="form-control" id="profilePicture" />
+            <label class="input-group-text" for="profilePicture"
+              >Upload</label
+            >
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" form="usersProfileForm" class="btn btn-dark">
+          Save Profile
+        </button>
+        {{#if error}}
+        <i
+          class="fa-solid fa-triangle-exclamation"
+          style="
+            margin-left: 10px;
+            font-size: 2rem;
+            color: red;
+            cursor: pointer;
+          "
+          onclick="showErrors();"
+        ></i>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,112 +1,195 @@
-<html lang='en'>
-
+<html lang="en">
   <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <meta http-equiv='X-UA-Compatible' content='ie=edge' />
-    <title>{{appTitle}}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{{ appTitle }}</title>
     <link
-      href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css'
-      rel='stylesheet'
-      integrity='sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD'
-      crossorigin='anonymous'
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
     />
     <link
-      rel='stylesheet'
-      href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css'
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
     />
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
 
   <body>
-    <div class='main__container'>
-      {{#if login}}
-        {{{body}}}
-      {{/if}}
-      {{#if signup}}
-       {{{body}}}
-      {{/if}}
-      {{#unless login}}
-        {{#unless signup}}
-        <section class='main__container-sidenav'>
-          <div class='main__container--sidenav-logo'>
-            <img
-              src='../../images/SimpletechGroup_Grey.png'
-              alt='Simpletech Group, LLC'
-            />
+    <div class="main__container">
+      {{#if login}} {{{body}}} {{/if}} {{#if signup}} {{{body}}} {{/if}}
+      {{#unless login}} {{#unless signup}}
+      <section class="main__container-sidenav">
+        <div class="main__container--sidenav-logo">
+          <img
+            src="/images/SimpletechGroup_Grey.png"
+            alt="Simpletech Group, LLC"
+          />
+        </div>
+        <div class="main__container--sidenav-nav">
+          {{#each navmenu}}
+          <ul class="nav flex-column justify-content-center">
+            <!-- prettier-ignore-attribute -->
+            <li
+              class="nav-item d-flex flex-row justify-content-between align-items-center {{#if this.active}} active {{/if}}"
+              style="flex-basis:0;"
+            >
+              <i class="{{this.icon}}" style="flex: 2"></i>
+              <a
+                href="/{{this.link}}"
+                class="nav-link active align-self-start w-100"
+                style="padding: 0; flex: 6"
+                >{{ this.title }}</a
+              >
+              <i class="fa-solid fa-angle-right" style="flex: 1"></i>
+            </li>
+          </ul>
+          {{/each}}
+        </div>
+        <div style="width: 100%">
+          <form action="/auth/logout" method="post">
+            <button type="submit" class="btn btn-secondary" style="width: 100%">
+              <i
+                class="fa-solid fa-right-from-bracket fa-flip-horizontal"
+                style="margin-right: 20px"
+              ></i
+              >Logout
+            </button>
+          </form>
+        </div>
+      </section>
+      <section class="main__container-width"></section>
+      <section class="main__container-right">
+        <div class="main__container--right-header">
+          <div class="main__container--right--header-left">
+            <div class="welcome">
+              Welcome {{ session.currentUser.fname }} {{
+              session.currentUser.lname }}
+            </div>
+            <div class="entityName">{{ session.entity.name }}</div>
           </div>
-          <div class='main__container--sidenav-nav'>
-            {{#each navmenu}}
-              <ul class="nav flex-column justify-content-center">
-                <!-- prettier-ignore-attribute -->
-                <li class="nav-item d-flex flex-row justify-content-between align-items-center {{#if this.active}} active {{/if}}" style="flex-basis:0;">
-                  <i class='{{this.icon}}' style="flex:2"></i>
-                  <a href="../../{{this.link}}" class="nav-link active align-self-start w-100" style="padding:0;flex:6">{{this.title}}</a>
-                  <i class='fa-solid fa-angle-right' style="flex:1"></i>
-                </li>
-              </ul>
-            {{/each}}
-          </div>
-          <div style='width:100%'>
-            <form action="/auth/logout" method="post">
-            <button
-              type='submit'
-              class='btn btn-secondary'
-              style='width:100%'
-            ><i
-                class='fa-solid fa-right-from-bracket fa-flip-horizontal'
-                style='margin-right:20px;'
-              ></i>Logout</button></form>
-          </div>
-        </section>
-        <section class='main__container-width'></section>
-        <section class='main__container-right'>
-          <div class='main__container--right-header'>
-            <div class="row">
-              <div class="col">
-                  <div class='main__container--right--header-welcome'>Welcome {{session.currentUser.fname}} {{session.currentUser.lname}}</div>
+          <div class="main__container--right--header-right">
+            <div class="profile_icon">
+              <div class="dropdown">
+                {{#unless session.currentUser.profilePicture }}
+                <i
+                  class="bi bi-person-circle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  data-bs-auto-close="outside"
+                  style="cursor: pointer"
+                ></i>
+                {{else}} {{!--
+                <img
+                  src="{{session.currentUser.profilePicture}}"
+                  alt=""
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  data-bs-auto-close="outside"
+                  style="width: 50px; border-radius: 50%; cursor: pointer"
+                />
+                --}}
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    cursor: pointer;
+                    background-image: url({{session.currentUser.profilePicture}});
+                    background-size: cover;
+                    border-radius: 50%;
+                  "
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  data-bs-auto-close="outside"
+                ></div>
+                {{/unless}}
+                <form
+                  action="/auth/logout"
+                  onsubmit="return confirmLogOut();"
+                  method="post"
+                  class="dropdown-menu shadow dropdown-menu-end dropdown-menu-lg-start user__dropdown"
+                >
+                  <div class="mb-3 user__drowdown-header">
+                    {{ session.currentUser.fname }} {{ session.currentUser.lname
+                    }}
+                  </div>
+                  <div class="user__dropdown-body">
+                    <div class="mb-3 text-center">
+                      Role: {{ session.currentUser.role}}
+                    </div>
+                    <div class="user__dropdown--body--entity-icon">
+                      <i class="bi bi-buildings"></i>
+                    </div>
+                    <div class="user__dropdown--body--entity-title">
+                      {{ session.entity.name }}
+                    </div>
+                  </div>
+                  <div class="user__dropdown-footer">
+                    <button
+                      type="button"
+                      class="btn btn__edit-profile"
+                      onclick="editProfile();"
+                    >
+                      <i
+                        class="bi bi-pencil-square"
+                        style="margin-right: 20px"
+                      ></i
+                      >Edit Profile
+                    </button>
+                    <button type="submit" class="btn btn-secondary btn__logoff">
+                      <i
+                        class="bi bi-box-arrow-left"
+                        style="margin-right: 20px"
+                      ></i
+                      >Logout
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div class="col"></div>
             </div>
           </div>
-          <div class='main__container--right-body'>
-            {{{body}}}
-          </div>
-        </section>
-        {{/unless}}
-      {{/unless}}
+        </div>
+        <div class="main__container--right-body">{{{body}}}</div>
+      </section>
+      {{/unless}} {{/unless}}
     </div>
-
-
-
 
     {{#if error}}
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-
-        {{#each errorMsg}}
-        <div id="liveToast" class="toast text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-            <strong class="me-auto">Error</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-            {{this}}
-            </div>
+      {{#each errorMsg}}
+      <div
+        id="liveToast"
+        class="toast text-bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Error</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
         </div>
-        {{/each}}
-
+        <div class="toast-body">{{ this }}</div>
+      </div>
+      {{/each}}
     </div>
-    {{/if}}
+    {{/if}} {{>userProfile}}
     <script
-      src='https://kit.fontawesome.com/61787d92cf.js'
-      crossorigin='anonymous'
+      src="https://kit.fontawesome.com/61787d92cf.js"
+      crossorigin="anonymous"
     ></script>
     <script
-      src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js'
-      integrity='sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN'
-      crossorigin='anonymous'
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
     ></script>
-    <script src='/js/script.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/script.js"></script>
   </body>
-
 </html>

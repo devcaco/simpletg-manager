@@ -1,292 +1,323 @@
-<section class='main__container-login'>
-    <div class="main__container--login-leftBg"></div>
-    <div class="main__container--login-rightBg"></div>
+<section class="main__container-login">
+  <div class="main__container--login-leftBg"></div>
+  <div class="main__container--login-rightBg"></div>
   <div class="main__container--login-boxContainer">
-      <div class='main__container--login-box shadow-lg'>
-        <div class='main__container--login--box-left'>
-          <div class="main__container--login--box--left-card">
-            <div class="main__container--login--box--left-infobtn">
-              <i class="bi bi-info-circle info__btn"></i>
-            </div>
-            <div class="card__face main__container--login--box--left--card-front">
-              <img src='/images/logo-stg.png' alt='Login' />
-            </div>
-            <div class="card__face main__container--login--box--left--card-back">
-              <div class="main__container--login--box--left--card--back-header">
-                  <span class="appname">SIMPLETG MANAGER </span> <span class="version">Version 1.0</span>
-              </div>
-              <div class="row mt-3 main__container--login--box--left--card--back-tech">
-                <div class="col d-flex flex-column">
-                    <span class="title">TECHNOLOGIES:</span>
-                    <span>HTML5, CSS3</span>
-                    <span>BOOTSTRAP 5</span>
-                    <span>NodeJS</span>
-                    <span>ExpressJS</span>
-                    <span>MongoDB</span>
-                </div>
-                <div class="col d-flex flex-column align-items-end text-end flyio">
-                  <span class="title">DEPLOYED WITH</span>
-                  <img src="/images/fly-io-logo2.png" alt="">
-                </div>
-              </div>
-              <div class="github">
-                <div class=""><img src="/images/github-logo.png" alt=""></div>
-                <div class="" style="text-align:center">
-                  <div class="developed">
-                    <span class="title">Developed by</span>
-                    <span>Carlos Sosa (devcaco)</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="row ironhack">
-                <span class="title">IronHack</span>
-                <span>Miami, FL Feb 2023</span>
-              </div>
-            </div>
+    <div class="main__container--login-box shadow-lg">
+      <div class="main__container--login--box-left">
+        <div class="main__container--login--box--left-card">
+          <div class="main__container--login--box--left-infobtn">
+            <i class="bi bi-info-circle info__btn"></i>
           </div>
-        </div>
-        <div class='main__container--login--box-right'>
-          <div class='main__container--login--box--right-header'>
-            <ul class='nav nav-pills mb-3 mt-5' id='pills-tab' role='tablist'>
-              <li class='nav-item' role='presentation'>
-                <button
-                  class='nav-link
-                  {{#if login }}
-                  active
-                  {{/if}}'
-                  id='pills-login-tab'
-                  data-bs-toggle='pill'
-                  data-bs-target='#pills-login'
-                  type='button'
-                  role='tab'
-                  aria-controls='pills-login'
-                  aria-selected='true'
-                  style='width:150px;'
-                >Login</button>
-              </li>
-              <li class='nav-item' role='presentation'>
-                <button
-                  class='nav-link 
-                  {{#if signup }} active {{/if}}'
-                  id='pills-signup-tab'
-                  data-bs-toggle='pill'
-                  data-bs-target='#pills-signup'
-                  type='button'
-                  role='tab'
-                  aria-controls='pills-signup'
-                  aria-selected='false'
-                  style='width:150px;'
-                >Sign-Up</button>
-              </li>
-            </ul>
+          <div class="card__face main__container--login--box--left--card-front">
+            <img src="/images/logo-stg.png" alt="Login" />
           </div>
-          <div>
-            <div class='tab-content' id='myTabContent'>
-              <div
-                class='tab-pane fade {{#if login }} show active {{/if}}'
-                id='pills-login'
-                role='tabpanel'
-                aria-labelledby='pills-login-tab'
-                tabindex='0'
-              >
-                <form action='/auth/login' method='post'>
-                <input type="hidden" name="method" value="login" />
-                <div style="min-height:30px;">
-                    {{#if loginFlash}}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                      <div>{{loginFlash}}</div>
-                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                    {{/if}}
-                </div>
-                  <div class='input-group mb-4'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-email'
-                      style='width:100px;'
-                    >E-Mail</span>
-                    <input
-                      type='email'
-                      name="emailLogin"
-                      id='emailLogin'
-                      value="{{form.email}}"
-                      class='form-control'
-                      aria-label='email-username'
-                      aria-describedby='inputGroup-email'
-                      required
-                    />
-                  </div>
-                  <div class='input-group mb-5'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-pwd'
-                      style='width:100px;'
-                    >Password</span>
-                    <input
-                      type='password'
-                      name="pwdLogin"
-                      id="pwdLogin"
-                      class='form-control'
-                      aria-label='pwd'
-                      aria-describedby='inputGroup-pwd'
-                      required
-                    />
-                  </div>
-                  <div class='mb-4'>
-                    <input
-                      class='form-check-input'
-                      type='checkbox'
-                      name="rememberMe"
-                      id='rememberMe'
-                      value='true'
-                    />
-                    <label class='form-check-label' for='flexCheckDefault'>
-                      Remember Me
-                    </label>
-                  </div>
-                  <div class="d-flex align-items-center justify-content-center">
-                    <button
-                      type='submit'
-                      class='btn btn-secondary'
-                      style='width:100%'
-                    >Login</button>
-                    {{#if error}}
-                    {{#if login}}
-                    <i class="fa-solid fa-triangle-exclamation error_triangle" onclick="showErrors();"></i>
-                    {{/if}}
-                    {{/if}}
-                  </div>
-                </form>
+          <div class="card__face main__container--login--box--left--card-back">
+            <div class="main__container--login--box--left--card--back-header">
+              <span class="appname">SIMPLETG MANAGER </span>
+              <span class="version">Version 1.0</span>
+            </div>
+            <div
+              class="row mt-3 main__container--login--box--left--card--back-tech"
+            >
+              <div class="col d-flex flex-column">
+                <span class="title">TECHNOLOGIES:</span>
+                <span>HTML5, CSS3</span>
+                <span>BOOTSTRAP 5</span>
+                <span>NodeJS</span>
+                <span>ExpressJS</span>
+                <span>MongoDB</span>
               </div>
               <div
-                class='tab-pane fade {{#if signup }} show active {{/if}}'
-                id='pills-signup'
-                role='tabpanel'
-                aria-labelledby='pills-signup-tab'
-                tabindex='0'
+                class="col d-flex flex-column align-items-end text-end flyio"
               >
-                <form action='/auth/login/signup' method='post'>
-                  <input type="hidden" name="method" value="signup" />
-                  <div class='input-group input-group-sm mb-4 mt-2'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-entity'
-                      style='width:100px;'
-                    >Entity Name</span>
-                    <input
-                      type='text'
-                      name='signup-entity'
-                      id='signup-entity'
-                      value="{{form.entity}}"
-                      class='form-control'
-                      aria-label='input-entity-name'
-                      aria-describedby='inputGroup-entity'
-                      required
-                    />
-                  </div>
-                  <div class='input-group input-group-sm mb-2'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-fname'
-                      style='width:100px;'
-                    >First Name</span>
-                    <input
-                      type='text'
-                      name='signup-fname'
-                      id='signup-fname'
-                      value="{{form.fname}}"
-                      class='form-control'
-                      aria-label='input-first-name'
-                      aria-describedby='inputGroup-fname'
-                      required
-                    />
-                  </div>
-                  <div class='input-group input-group-sm mb-3'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-lname'
-                      style='width:100px;'
-                    >Last Name</span>
-                    <input
-                      type='text'
-                      name='signup-lname'
-                      id='signup-lname'
-                      value="{{form.lname}}"
-                      class='form-control'
-                      aria-label='input-last-name'
-                      aria-describedby='inputGroup-lname'
-                      required
-                    />
-                  </div>
-                  <div class='input-group input-group-sm mb-2'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-email'
-                      style='width:100px;'
-                    >E-mail</span>
-                    <input
-                      type='email'
-                      name='signup-email'
-                      id='signup-email'
-                      value="{{form.emailSignup}}"
-                      class='form-control'
-                      aria-label='input-email-address'
-                      aria-describedby='inputGroup-email'
-                      required
-                    />
-                  </div>
-                  <div class='input-group input-group-sm mb-2'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-password'
-                      style='width:100px;'
-                    >Password</span>
-                    <input
-                      type='password'
-                      name='signup-password'
-                      id='signup-password'
-                      class='form-control'
-                      aria-label='input-password-1'
-                      aria-describedby='inputGroup-password'
-                      required
-                      oninput='checkPwdMatch("signup-password","signup-password-2")'
-                    />
-                  </div>
-                  <div class='input-group input-group-sm mb-4'>
-                    <span
-                      class='input-group-text'
-                      id='inputGroup-password2'
-                      style='width:100px;'
-                    >Confirm Pwd</span>
-                    <input
-                      type='password'
-                      name='signup-password-2'
-                      id='signup-password-2'
-                      class='form-control'
-                      aria-label='input-password-2'
-                      aria-describedby='inputGroup-password2'
-                      required
-                      oninput='checkPwdMatch("signup-password","signup-password-2")'
-                    />
-                  </div>
-                  <div class="d-flex align-items-center">
-                    <button
-                      type='submit'
-                      class='btn btn-secondary'
-                      style='width:100%'
-                    >Signup</button>
-                    {{#if error}}
-                    {{#if signup}}
-                    <i class="fa-solid fa-triangle-exclamation error_triangle" onclick="showErrors();"></i>
-                    {{/if}}
-                    {{/if}}
-                  </div>
-                </form>
+                <span class="title">DEPLOYED WITH</span>
+                <img src="/images/fly-io-logo2.png" alt="" />
               </div>
+            </div>
+            <div class="github">
+              <div class=""><img src="/images/github-logo.png" alt="" /></div>
+              <div class="" style="text-align: center">
+                <div class="developed">
+                  <span class="title">Developed by</span>
+                  <span>Carlos Sosa (devcaco)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row ironhack">
+              <span class="title">IronHack</span>
+              <span>Miami, FL Feb 2023</span>
             </div>
           </div>
         </div>
       </div>
+      <div class="main__container--login--box-right">
+        <div class="main__container--login--box--right-header">
+          <ul class="nav nav-pills mb-3 mt-5" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link
+                  {{#if login }}
+                  active
+                  {{/if}}"
+                id="pills-login-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#pills-login"
+                type="button"
+                role="tab"
+                aria-controls="pills-login"
+                aria-selected="true"
+                style="width: 150px"
+              >
+                Login
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link 
+                  {{#if signup }} active {{/if}}"
+                id="pills-signup-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#pills-signup"
+                type="button"
+                role="tab"
+                aria-controls="pills-signup"
+                aria-selected="false"
+                style="width: 150px"
+              >
+                Sign-Up
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div class="tab-content" id="myTabContent">
+            <div
+              class="tab-pane fade {{#if login }} show active {{/if}}"
+              id="pills-login"
+              role="tabpanel"
+              aria-labelledby="pills-login-tab"
+              tabindex="0"
+            >
+              <form action="/auth/login" method="post">
+                <input type="hidden" name="method" value="login" />
+                <div style="min-height: 30px">
+                  {{#if loginFlash}}
+                  <div
+                    class="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                  >
+                    <div>{{loginFlash}}</div>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="alert"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  {{/if}}
+                </div>
+                <div class="input-group mb-4">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-email"
+                    style="width: 100px"
+                    >E-Mail</span
+                  >
+                  <input
+                    type="email"
+                    name="emailLogin"
+                    id="emailLogin"
+                    value="{{form.emailLogin}}"
+                    class="form-control"
+                    aria-label="email-username"
+                    aria-describedby="inputGroup-email"
+                    required
+                  />
+                </div>
+                <div class="input-group mb-5">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-pwd"
+                    style="width: 100px"
+                    >Password</span
+                  >
+                  <input
+                    type="password"
+                    name="pwdLogin"
+                    id="pwdLogin"
+                    class="form-control"
+                    aria-label="pwd"
+                    aria-describedby="inputGroup-pwd"
+                    required
+                  />
+                </div>
+                <div class="mb-4">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="rememberMe"
+                    id="rememberMe"
+                    value="true"
+                  />
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Remember Me
+                  </label>
+                </div>
+                <div class="d-flex align-items-center justify-content-center">
+                  <button
+                    type="submit"
+                    class="btn btn-secondary"
+                    style="width: 100%"
+                  >
+                    Login
+                  </button>
+                  {{#if error}} {{#if login}}
+                  <i
+                    class="fa-solid fa-triangle-exclamation error_triangle"
+                    onclick="showErrors();"
+                  ></i>
+                  {{/if}} {{/if}}
+                </div>
+              </form>
+            </div>
+            <div
+              class="tab-pane fade {{#if signup }} show active {{/if}}"
+              id="pills-signup"
+              role="tabpanel"
+              aria-labelledby="pills-signup-tab"
+              tabindex="0"
+            >
+              <form action="/auth/login/signup" method="post">
+                <input type="hidden" name="method" value="signup" />
+                <div class="input-group input-group-sm mb-4 mt-2">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-entity"
+                    style="width: 100px"
+                    >Entity Name</span
+                  >
+                  <input
+                    type="text"
+                    name="signup-entity"
+                    id="signup-entity"
+                    value="{{form.entity}}"
+                    class="form-control"
+                    aria-label="input-entity-name"
+                    aria-describedby="inputGroup-entity"
+                    required
+                  />
+                </div>
+                <div class="input-group input-group-sm mb-2">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-fname"
+                    style="width: 100px"
+                    >First Name</span
+                  >
+                  <input
+                    type="text"
+                    name="signup-fname"
+                    id="signup-fname"
+                    value="{{form.fname}}"
+                    class="form-control"
+                    aria-label="input-first-name"
+                    aria-describedby="inputGroup-fname"
+                    required
+                  />
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-lname"
+                    style="width: 100px"
+                    >Last Name</span
+                  >
+                  <input
+                    type="text"
+                    name="signup-lname"
+                    id="signup-lname"
+                    value="{{form.lname}}"
+                    class="form-control"
+                    aria-label="input-last-name"
+                    aria-describedby="inputGroup-lname"
+                    required
+                  />
+                </div>
+                <div class="input-group input-group-sm mb-2">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-email"
+                    style="width: 100px"
+                    >E-mail</span
+                  >
+                  <input
+                    type="email"
+                    name="signup-email"
+                    id="signup-email"
+                    value="{{form.emailSignup}}"
+                    class="form-control"
+                    aria-label="input-email-address"
+                    aria-describedby="inputGroup-email"
+                    required
+                  />
+                </div>
+                <div class="input-group input-group-sm mb-2">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-password"
+                    style="width: 100px"
+                    >Password</span
+                  >
+                  <input
+                    type="password"
+                    name="signup-password"
+                    id="signup-password"
+                    class="form-control"
+                    aria-label="input-password-1"
+                    aria-describedby="inputGroup-password"
+                    required
+                    oninput='checkPwdMatch("signup-password","signup-password-2")'
+                  />
+                </div>
+                <div class="input-group input-group-sm mb-4">
+                  <span
+                    class="input-group-text"
+                    id="inputGroup-password2"
+                    style="width: 100px"
+                    >Confirm Pwd</span
+                  >
+                  <input
+                    type="password"
+                    name="signup-password-2"
+                    id="signup-password-2"
+                    class="form-control"
+                    aria-label="input-password-2"
+                    aria-describedby="inputGroup-password2"
+                    required
+                    oninput='checkPwdMatch("signup-password","signup-password-2")'
+                  />
+                </div>
+                <div class="d-flex align-items-center">
+                  <button
+                    type="submit"
+                    class="btn btn-secondary"
+                    style="width: 100%"
+                  >
+                    Signup
+                  </button>
+                  {{#if error}} {{#if signup}}
+                  <i
+                    class="fa-solid fa-triangle-exclamation error_triangle"
+                    onclick="showErrors();"
+                  ></i>
+                  {{/if}} {{/if}}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

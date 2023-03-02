@@ -1,0 +1,109 @@
+{{! CUSTOMER MODAL FORM }}
+
+<div
+  class="modal fade"
+  id="customerNotesModal"
+  tabindex="-1"
+  aria-labelledby="customerNotesModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="customerNotesModalLabel">
+          {{#unless edit}} Add New Note {{else}} Edit Note {{/unless}}
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="/customers/details/{{customer._id}}/notes/" method="post" id="customerNotesForm">
+          <input type="hidden" name="section" value="notes" />
+          {{#if edit}}
+          <input type="hidden" name="custNoteId" value="{{form._id}}" />
+          {{/if}} {{#unless edit }}
+          <div class="input-group input-group-sm mb-3 dba_field">
+            <span
+              class="input-group-text"
+              id="inputGroup-custNote"
+              style="width: 100px"
+              >Created By:</span
+            >
+            <input
+              type="text"
+              name="createdBy"
+              id="createdBy"
+              value="{{form.user}}"
+              class="form-control"
+              aria-label="input-form-dba"
+              aria-describedby="inputGroup-dba"
+              readonly
+            />
+          </div>
+          {{/unless}}
+          <div class="input-group input-group-sm mb-3 dba_field">
+            <span
+              class="input-group-text"
+              id="inputGroup-custNote"
+              style="width: 100px"
+              >Note</span
+            >
+            <textarea
+              class="form-control"
+              name="note"
+              id="note"
+              value="{{form.note}}"
+              aria-label="With textarea"
+              style="height: 200px"
+              required
+            ></textarea>
+          </div>
+          {{#unless edit }}
+          <div class="input-group input-group-sm mb-3 dba_field">
+            <span
+              class="input-group-text"
+              id="inputGroup-custNote"
+              style="width: 100px"
+              >Date:</span
+            >
+            <input
+              type="text"
+              name="createdAt"
+              id="createdAt"
+              value="{{form.createdAt}}"
+              class="form-control"
+              aria-label="input-form-dba"
+              aria-describedby="inputGroup-dba"
+              readonly
+            />
+          </div>
+          {{/unless}}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" form="customerNotesForm" class="btn btn-dark">
+          {{#unless edit}} Add Note {{else}} Save Note {{/unless}}
+        </button>
+        {{#if error}}
+        <i
+          class="fa-solid fa-triangle-exclamation"
+          style="
+            margin-left: 10px;
+            font-size: 2rem;
+            color: red;
+            cursor: pointer;
+          "
+          onclick="showErrors();"
+        ></i>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

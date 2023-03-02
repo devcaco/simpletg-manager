@@ -42,19 +42,19 @@ const customerSchema = new Schema(
     devices: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Device',
+        ref: 'CustomerDevices',
       },
     ],
     notes: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Note',
+        ref: 'CustomerNotes',
       },
     ],
     workorders: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'WorkOrder',
+        ref: 'CustomerWorkOrders',
       },
     ],
   },

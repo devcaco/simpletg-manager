@@ -1,0 +1,21 @@
+<div class="customer__devices-container">
+  <div class="customer__devices--container-header">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      data-bs-toggle="modal"
+      data-bs-target="#customerModal"
+    >
+      Add Device
+    </button>
+  </div>
+  <div class="customer__devices--container-list">
+    {{#unless devices}}
+    <div class="customer__devices--container-noitems empty_section">
+      CUSTOMER WITHOUT DEVICES
+    </div>
+    {{/unless}}
+  </div>
+</div>
+
+{{>customerDevicesForm}}

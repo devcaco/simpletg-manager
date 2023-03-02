@@ -9,6 +9,12 @@ const Entity = require('../models/Entity.model');
 const User = require('../models/User.model');
 const UserSession = require('../models/UserSession.model');
 const Customer = require('../models/Customer.model');
+const CustomerNotes = require('../models/CustomerNotes.model');
+
+router.use('/*', (req, res, next) => {
+  res.locals.view = 'customers/customers';
+  next();
+});
 
 /* GET home page */
 router.get('/', isLoggedIn, async (req, res, next) => {
@@ -16,11 +22,12 @@ router.get('/', isLoggedIn, async (req, res, next) => {
   try {
     const customers = await getCustomers();
 
-    res.render('customers', { customers });
+    res.render('customers/customers', { customers });
   } catch (err) {
     console.log({ error: err });
 
-    res.end();
+    res.locals.errorMsg = err;
+    next('customers/customers');
   }
 });
 
@@ -37,23 +44,35 @@ router.get('/edit/:id', isLoggedIn, async (req, res, next) => {
 
     if (!theCustomer) errorMsg.push('No Customer Found');
 
-    res.render('customers', { edit: true, customers, form: theCustomer });
+    res.render('customers/customers', {
+      edit: true,
+      customers,
+      form: theCustomer,
+    });
   } catch (err) {
     console.log({ error: err });
-    next(err);
+    next('customers/customers');
   }
 });
 
-router.get('/details/:id', isLoggedIn, async (req, res, next) => {
+router.get('/details/:id/:section?', isLoggedIn, async (req, res, next) => {
   navmenu.forEach((elem) => (elem.active = elem.title === 'Customers'));
   const customerId = req.params.id;
   const errorMsg = [];
+  const section = req.params.section || 'details';
+
   try {
     console.log('GETTING CUSTOMER DETAILS');
 
     if (!customerId) errorMsg.push('No customerId provided');
 
-    const data = await Customer.findById(customerId);
+    const data = await Customer.findById(customerId).populate({
+      path: 'notes',
+      populate: {
+        path: 'user',
+      },
+    });
+
     if (!data) errorMsg.push('Customer not found!');
     if (errorMsg.length) throw new Error(errorMsg);
 
@@ -64,11 +83,15 @@ router.get('/details/:id', isLoggedIn, async (req, res, next) => {
       updatedAt: data.updatedAt.toLocaleString(),
     };
     console.log({ customer });
-    res.render('customerDetails', { customer });
+    console.log({ CustomerNotes: customer.notes });
+
+    res.render('customers/customerDetails', { customer, section });
   } catch (err) {
     console.log({ Error: err });
-
-    next(err);
+    // res.locals.errorMsg = err
+    // res.locals.errorMsg = err.message;
+    console.log({ ELERRORRRRR: res.locals.errorMsg });
+    next('customers/customers');
   }
 });
 
@@ -90,11 +113,12 @@ router.get('/favorite/:id/:fav', isLoggedIn, async (req, res, next) => {
     if (!data) errorMsg.push('Error setting customer as favorite');
     if (errorMsg.length) throw new Error(errorMsg);
 
-    res.redirect('../../../customers');
+    res.redirect('/customers');
   } catch (err) {
     console.log({ Error: err });
 
-    next(err);
+    res.locals.errorMsg = err;
+    next('customers/customers');
   }
 });
 
@@ -126,11 +150,12 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     });
     if (errorMsg.length) throw new Error(errorMsg);
 
-    res.redirect('../../../customers');
+    res.redirect('/customers');
   } catch (err) {
     console.log({ error: err });
 
-    res.end();
+    res.locals.errorMsg = err;
+    next('customers/customers');
   }
 });
 
@@ -166,11 +191,43 @@ router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
     );
     if (errorMsg.length) throw new Error(errorMsg);
 
-    res.redirect('../../../customers');
+    res.redirect('/customers');
   } catch (err) {
     console.log({ error: err });
 
-    next(err);
+    res.locals.errorMsg = err;
+    next('customers/customers');
+  }
+});
+
+router.post('/details/:id/notes', isLoggedIn, async (req, res, next) => {
+  console.log('ADDING NEW CUSTOMER NOTE');
+  const customerId = req.params.id;
+  const userId = req.session.currentUser._id;
+  const { note } = req.body;
+
+  const errorMsg = [];
+
+  try {
+    if (!note || !customerId || !userId)
+      errorMsg.push('Required Field missing.');
+
+    const newNote = await CustomerNotes.create({
+      customer: customerId,
+      user: userId,
+      note,
+    });
+
+    req.flash('customer', 'Note added successfully');
+    res.redirect('/customers/details/' + customerId + '/notes');
+    if (errorMsg.length) throw new Error(errorMsg);
+  } catch (err) {
+    console.log({ Error: err });
+    res.render('customers/customerDetails', {
+      error: true,
+      errorMsg,
+      section: 'notes',
+    });
   }
 });
 
@@ -186,11 +243,12 @@ router.post('/delete', isLoggedIn, async (req, res, next) => {
 
     const delCustomer = await Customer.findByIdAndDelete(customerId);
 
-    res.redirect('../../../customers');
+    res.redirect('/customers');
   } catch (err) {
     console.log({ Error: err });
 
-    next(err);
+    res.locals.errorMsg = err;
+    next('customers/customers');
   }
 });
 

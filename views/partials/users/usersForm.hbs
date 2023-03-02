@@ -1,0 +1,168 @@
+{{! USER MODAL FORM }}
+
+<div
+  class="modal fade"
+  id="usersModal"
+  tabindex="-1"
+  aria-labelledby="usersModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="usersModalLabel">
+          {{#unless edit}} Add New User {{else}} Edit User {{form.fname}}
+          {{form.lname}} {{/unless}}
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post" id="usersForm">
+          {{#if edit}}
+          <input type="hidden" name="userId" value="{{form._id}}" />
+          {{/if}}
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-fname"
+              style="width: 100px"
+              >First Name</span
+            >
+            <input
+              type="text"
+              name="fname"
+              id="fname"
+              value="{{form.fname}}"
+              class="form-control"
+              aria-label="input-first-name"
+              aria-describedby="inputGroup-fname"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-lname"
+              style="width: 100px"
+              >Last Name</span
+            >
+            <input
+              type="text"
+              name="lname"
+              id="lname"
+              value="{{form.lname}}"
+              class="form-control"
+              aria-label="input-last-name"
+              aria-describedby="inputGroup-lname"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-email"
+              style="width: 100px"
+              >E-Mail</span
+            >
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value="{{form.email}}"
+              class="form-control"
+              aria-label="input-email"
+              aria-describedby="inputGroup-email"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <label
+              class="input-group-text"
+              for="inputGroupRole"
+              style="width: 100px"
+              >Role</label
+            >
+            <select
+              class="form-select"
+              id="inputGroupRole"
+              name="role"
+              required
+            >
+              <option value="">Choose...</option>
+              {{#each rolesOptions}} {{#if this.selected}}
+              <option value="{{this.title}}" selected>{{this.title}}</option>
+              {{else}}
+              <option value="{{this.title}}">{{this.title}}</option>
+              {{/if}} {{/each}}
+            </select>
+          </div>
+          {{#unless edit}}
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-pwd"
+              style="width: 100px"
+              >Password</span
+            >
+            <input
+              type="password"
+              name="password"
+              id="password"
+              value=""
+              class="form-control"
+              aria-label="input-pwd"
+              aria-describedby="inputGroup-pwd"
+              oninput="checkPwdMatch('password','password2');"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-pwd2"
+              style="width: 100px"
+              >Confirm Pwd</span
+            >
+            <input
+              type="password"
+              name="password2"
+              id="password2"
+              value=""
+              class="form-control"
+              aria-label="input-pwd2"
+              aria-describedby="inputGroup-pwd2"
+              oninput="checkPwdMatch('password','password2');"
+              required
+            />
+          </div>
+          {{/unless}}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" form="usersForm" class="btn btn-dark">
+          {{#unless edit}} Add User {{else}} Save User {{/unless}}
+        </button>
+        {{#if error}}
+        <i
+          class="fa-solid fa-triangle-exclamation"
+          style="
+            margin-left: 10px;
+            font-size: 2rem;
+            color: red;
+            cursor: pointer;
+          "
+          onclick="showErrors();"
+        ></i>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

@@ -41,10 +41,9 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    profilePhoto: {
-      type: String,
+    profilePicture: {
+      type: Object,
       required: false,
-      trim: true,
     },
     sessions: [
       {
@@ -59,6 +58,10 @@ const userSchema = new Schema(
     autoIndex: true,
   }
 );
+
+userSchema.virtual('fullName').get(function () {
+  return this.fname + ' ' + this.lname;
+});
 
 const User = model('User', userSchema);
 

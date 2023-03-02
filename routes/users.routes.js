@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const fileUploader = require('../config/cloudinary.config');
 
 // ℹ️ Handles password encryption
 const bcryptjs = require('bcryptjs');
@@ -29,7 +30,7 @@ router.get('/', isLoggedIn, async (req, res, next) => {
 
   const users = await getUsers(req);
 
-  res.render('users', {
+  res.render('users/users', {
     superAdmin: req.session.superAdmin,
     users,
     rolesOptions,
@@ -51,7 +52,7 @@ router.get('/edit/:id', isLoggedIn, async (req, res, next) => {
       (elRole) => (elRole.selected = form._doc.role === elRole.title)
     );
 
-    res.render('users', {
+    res.render('users/users', {
       edit: true,
       form: form._doc,
       rolesOptions,
@@ -75,7 +76,7 @@ router.get('/details/:id', isLoggedIn, async (req, res, next) => {
 
     if (errorMsg.length) throw new Error(errorMsg);
 
-    res.render('users', {
+    res.render('users/users', {
       details: true,
       user: {
         _id: user._id,
@@ -110,12 +111,12 @@ router.post('/delete', isLoggedIn, async (req, res, next) => {
 
     if (errorMsg.length) throw new Error(errorMsg);
     req.flash('userFlash', 'The user was successfully deleted');
-    res.redirect('../../users');
+    res.redirect('/users');
   } catch (err) {
     console.log({ error: err });
     if (!errorMsg.length) errorMsg.push(err.message);
 
-    res.status(500).render('users', { error: true, errorMsg });
+    res.status(500).render('users/users', { error: true, errorMsg });
   }
 });
 
@@ -152,12 +153,12 @@ router.post('/pwd', isLoggedIn, async (req, res, next) => {
       { runValidators: true, new: true, context: 'query', unique: true }
     );
     req.flash('userFlash', `The user's password was successfully updated`);
-    res.redirect('../../users');
+    res.redirect('/users');
   } catch (err) {
     console.log({ error: err });
     if (!errorMsg.length) errorMsg.push(err.message);
 
-    res.status(500).render('users', {
+    res.status(500).render('users/users', {
       error: true,
       errorMsg,
       pwd: true,
@@ -167,6 +168,46 @@ router.post('/pwd', isLoggedIn, async (req, res, next) => {
     });
   }
 });
+
+router.post(
+  '/edit/profile',
+  isLoggedIn,
+  fileUploader.single('profilePicture'),
+  async (req, res, next) => {
+    const { userId, fname, lname, email } = req.body;
+    const profilePicture = (req.file ? req.file.path : '') || '';
+    const errorMsg = [];
+
+    try {
+      if (!fname || !lname || !email)
+        errorMsg.push('Required fields are missing, please provide all fields');
+
+      const savedUser = await User.findByIdAndUpdate(
+        userId,
+        { fname, lname, email, profilePicture },
+        { new: true }
+      ).populate({
+        path: 'sessions',
+        options: {
+          sort: { date_login: 'desc' },
+          limit: 5,
+        },
+      });
+
+      req.session.currentUser = savedUser;
+
+      console.log({ savedSessionUser: req.session.currentUser });
+
+      if (errorMsg.length) throw new Error(errorMsg);
+
+      res.send('User profile Saved');
+    } catch (err) {
+      console.log({ ERROR: err });
+
+      res.status(500).end;
+    }
+  }
+);
 
 router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
   const { userId, fname, lname, email, role } = req.body;
@@ -213,7 +254,7 @@ router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
 
     rolesOptions.forEach((elRole) => (elRole.selected = role === elRole.title));
 
-    res.status(500).render('users', {
+    res.status(500).render('users/users', {
       edit: true,
       error: true,
       errorMsg,
@@ -288,7 +329,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 
     rolesOptions.forEach((elRole) => (elRole.selected = role === elRole.title));
     console.log({ role, rolesOptions });
-    res.status(500).render('users', {
+    res.status(500).render('users/users', {
       error: true,
       errorMsg,
       form: {

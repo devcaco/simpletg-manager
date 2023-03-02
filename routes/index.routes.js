@@ -8,7 +8,7 @@ const isLoggedIn = require('../middleware/isLoggedIn');
 
 /* GET home page */
 router.get('/', isLoggedIn, (req, res, next) => {
-  res.render('index');
+  res.redirect('/dashboard');
 });
 
 router.get('/dashboard', isLoggedIn, async (req, res, next) => {
@@ -18,7 +18,10 @@ router.get('/dashboard', isLoggedIn, async (req, res, next) => {
 
     const customers = await Customer.find({ isFavorite: true }).limit(5);
 
-    console.log({ dashFavoritesCustomers: customers });
+    lastSessions.forEach(
+      (el) => (el.date_login = new Date(el.date_login).toLocaleString())
+    );
+
     res.render('dashboard', { lastSessions, customers });
   } catch (err) {
     console.log({ Error: err });

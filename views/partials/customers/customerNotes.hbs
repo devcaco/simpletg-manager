@@ -1,0 +1,36 @@
+<div class="customer__notes-container">
+  <div class="customer__notes--container-header">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      data-bs-toggle="modal"
+      data-bs-target="#customerNotesModal"
+    >
+      Add Note
+    </button>
+  </div>
+  <div class="customer__notes--container-list">
+    {{#unless customer.notes }}
+    <div class="customer__notes--container-noitems empty_section">
+      CUSTOMER WITHOUT NOTES
+    </div>
+    {{else}}
+    {{#each customer.notes}}
+    <div class="customer__notes--container--list-item">
+      <div class="customer__notes--container--list--item-header">
+        <div style="flex: 1">{{this.user.fname}} {{this.user.lname}}</div>
+        <div><i class="bi bi-trash"></i></div>
+        <div><i class="bi bi-pencil-square"></i></div>
+        <div><i class="bi bi-arrows-angle-expand"></i></div>
+      </div>
+      <div class="customer__notes--container--list--item-body">
+        {{this.note}}
+      </div>
+      <div class="customer__notes--container--list--item-body"></div>
+    </div>
+    {{/each}}
+    {{/unless}}
+  </div>
+</div>
+
+{{>customerNotesForm}}

@@ -1,0 +1,21 @@
+<div class="customer__documents-container">
+  <div class="customer__documents--container-header">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      data-bs-toggle="modal"
+      data-bs-target="#customerModal"
+    >
+      Upload New Document
+    </button>
+  </div>
+  <div class="customer__documents--container-list">
+    {{#unless documents}}
+    <div class="customer__documents--container-noitems empty_section">
+      CUSTOMER WITHOUT DOCUMENTS
+    </div>
+    {{/unless}}
+  </div>
+</div>
+
+{{>customerDocumentsForm}}

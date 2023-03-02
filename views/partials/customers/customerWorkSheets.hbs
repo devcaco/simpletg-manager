@@ -1,0 +1,21 @@
+<div class="customer__worksheets-container">
+  <div class="customer__worksheets--container-header">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      data-bs-toggle="modal"
+      data-bs-target="#customerModal"
+    >
+      Add Work Sheet
+    </button>
+  </div>
+  <div class="customer__worksheets--container-list">
+    {{#unless worksheets}}
+    <div class="customer__worksheets--container-noitems empty_section">
+      CUSTOMER WITHOUT WORK SHEETS
+    </div>
+    {{/unless}}
+  </div>
+</div>
+
+{{>customerWorkSheetsForm}}

@@ -1,62 +1,65 @@
-<div class='main__container--right--body-dashboard'>
-  <div class='main__container--right--dashboard-header'>
-    Dashboard
-  </div>
-  <div class='main__container--right--body--dashboard-content'>
-    <div class='main__container--right--body--dashboard--content-item'>
+<div class="main__container--right--body-dashboard">
+  <div class="main__container--right--dashboard-header">Dashboard</div>
+  <div class="main__container--right--body--dashboard-content">
+    <div class="main__container--right--body--dashboard--content-item">
       <div
-        class='main__container--right--body--dashboard--content--item-title'
-        style=''
-      >Favorite Customers</div>
+        class="main__container--right--body--dashboard--content--item-title"
+        style=""
+      >
+        Favorite Customers
+      </div>
       <div
-        class='main__container--right--body--dashboard--content--item-hr'
+        class="main__container--right--body--dashboard--content--item-hr"
       ></div>
       <div
-        class='main__container--right--body--dashboard--content--item-body align-items-start'
+        class="main__container--right--body--dashboard--content--item-body align-items-start"
       >
         <table
-          class='table table-striped-columns table-hover'
-          style='margin-top: 10px;'
+          class="table table-striped-columns table-hover"
+          style="margin-top: 10px"
         >
           {{#each customers}}
-            <tr>
-              <td>{{this.custName}}</td>
-            </tr>
+          <tr>
+            <td>{{this.custName}}</td>
+          </tr>
           {{/each}}
         </table>
       </div>
     </div>
-    <div class='main__container--right--body--dashboard--content-item'>
+
+    <div class="main__container--right--body--dashboard--content-item">
+      <div class="main__container--right--body--dashboard--content--item-title">
+        Monthly Invoices
+      </div>
       <div
-        class='main__container--right--body--dashboard--content--item-title'
-      >Monthly Invoices</div>
-      <div
-        class='main__container--right--body--dashboard--content--item-hr'
+        class="main__container--right--body--dashboard--content--item-hr"
       ></div>
-      <div class='main__container--right--body--dashboard--content--item-body'>
+      <div class="main__container--right--body--dashboard--content--item-body">
         No Data
       </div>
     </div>
-    <div class='main__container--right--body--dashboard--content-item'>
+
+    <div class="main__container--right--body--dashboard--content-item">
+      <div class="main__container--right--body--dashboard--content--item-title">
+        Monthly Estimates
+      </div>
       <div
-        class='main__container--right--body--dashboard--content--item-title'
-      >Monthly Estimates</div>
-      <div
-        class='main__container--right--body--dashboard--content--item-hr'
+        class="main__container--right--body--dashboard--content--item-hr"
       ></div>
-      <div class='main__container--right--body--dashboard--content--item-body'>
+      <div class="main__container--right--body--dashboard--content--item-body">
         No Data
       </div>
     </div>
-    <div class='main__container--right--body--dashboard--content-item'>
+
+    <div class="main__container--right--body--dashboard--content-item">
+      <div class="main__container--right--body--dashboard--content--item-title">
+        Quick Actions
+      </div>
       <div
-        class='main__container--right--body--dashboard--content--item-title'
-      >Quick Actions</div>
-      <div
-        class='main__container--right--body--dashboard--content--item-hr'
+        class="main__container--right--body--dashboard--content--item-hr"
       ></div>
-      <div class='main__container--right--body--dashboard--content--item-body'>
-        <table class='table table-striped-columns table-hover'>
+      <div class="main__container--right--body--dashboard--content--item-body">
+        <table class="table table-striped-columns table-hover">
           <tr>
             <td>Add new customer</td>
           </tr>
@@ -70,31 +73,31 @@
       </div>
     </div>
     <div
-      class='main__container--right--body--dashboard--content-item'
-      style='width:500px'
+      class="main__container--right--body--dashboard--content-item"
+      style="width: 500px"
     >
+      <div class="main__container--right--body--dashboard--content--item-title">
+        Session History
+      </div>
       <div
-        class='main__container--right--body--dashboard--content--item-title'
-      >Session History</div>
-      <div
-        class='main__container--right--body--dashboard--content--item-hr'
+        class="main__container--right--body--dashboard--content--item-hr"
       ></div>
       <div
-        class='main__container--right--body--dashboard--content--item-body align-items-start'
+        class="main__container--right--body--dashboard--content--item-body align-items-start"
       >
-        <table class='table table-striped-columns table-hover'>
+        <table class="table table-striped-columns table-hover">
           <thead>
             <tr>
-              <th scope='col'>Date/Time</th>
-              <th scope='col'>IP Address</th>
+              <th scope="col">Date/Time</th>
+              <th scope="col">IP Address</th>
             </tr>
           </thead>
-          <tbody style='font-size:.8rem'>
+          <tbody style="font-size: 0.8rem">
             {{#each lastSessions}}
-              <tr>
-                <td>{{this.date_login}}</td>
-                <td>{{this.ip_address}}</td>
-              </tr>
+            <tr>
+              <td>{{this.date_login}}</td>
+              <td>{{this.ip_address}}</td>
+            </tr>
             {{/each}}
           </tbody>
         </table>

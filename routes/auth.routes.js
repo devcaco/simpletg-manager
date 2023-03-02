@@ -97,8 +97,8 @@ router.post('/login', isLoggedOut, async (req, res, next) => {
     req.session.currentUser = user;
     req.session.role = {
       superAdmin: user.role === 'Super Admin',
-      Admin: user.role === 'Admin',
-      User: user.role === 'User',
+      admin: user.role === 'Admin',
+      user: user.role === 'User',
     };
     req.session.entity = user.entity;
     req.session.superAdmin = superAdmin;
@@ -217,13 +217,10 @@ router.post('/login/signup', isLoggedOut, async (req, res, next) => {
 
 function checkLogOff(req, res, next) {
   if (req.query.Off) {
+    console.log('hola');
     req.flash('loginFlash', 'Sign-Off Successful');
   }
   next();
 }
-
-router.get('/*', (req, res, next) => {
-  res.redirect('/login');
-});
 
 module.exports = router;

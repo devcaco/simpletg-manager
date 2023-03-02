@@ -1,0 +1,109 @@
+{{! USER MODAL FORM }}
+
+<div
+  class="modal fade"
+  id="usersPwdModal"
+  tabindex="-1"
+  aria-labelledby="usersPwdModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="usersPwdModalLabel">
+          Reset User's Password
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="/users/pwd" method="post" id="usersPwdForm">
+          <input
+            type="hidden"
+            name="userId"
+            value="{{form.userId}}"
+            id="userPwdIdField"
+          />
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-username"
+              style="width: 100px"
+              >User:</span
+            >
+            <input
+              type="text"
+              id="pwdUsernameField"
+              name="username"
+              readonly
+              value="{{form.username}}"
+              class="form-control form-control-plaintext"
+              aria-label="input-pwd-username"
+              aria-describedby="inputGroup-pwdUsername"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-password"
+              style="width: 100px"
+              >Password</span
+            >
+            <input
+              type="password"
+              name="password"
+              id="pwd"
+              class="form-control"
+              aria-label="input-password"
+              aria-describedby="inputGroup-password"
+              required
+            />
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span
+              class="input-group-text"
+              id="inputGroup-password2"
+              style="width: 100px"
+              >Confirm Pwd</span
+            >
+            <input
+              type="password"
+              name="password2"
+              id="pwd2"
+              class="form-control"
+              aria-label="input-user-password2"
+              aria-describedby="inputGroup-password2"
+              required
+              oninput="checkPwdMatch('pwd','pwd2');"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="submit" form="usersPwdForm" class="btn btn-dark">
+          Reset Password
+        </button>
+        {{#if error}}
+        <i
+          class="fa-solid fa-triangle-exclamation"
+          style="
+            margin-left: 10px;
+            font-size: 2rem;
+            color: red;
+            cursor: pointer;
+          "
+          onclick="showErrors();"
+        ></i>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

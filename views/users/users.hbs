@@ -1,0 +1,151 @@
+<div class="main__container--right--body-users">
+  <div class="main__container--right--users-header">
+    <div>Users</div>
+    <div>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-bs-toggle="modal"
+        data-bs-target="#usersModal"
+        data-bs-whatever="@getbootstrap"
+      >
+        Add New User
+      </button>
+    </div>
+  </div>
+  <div class="main__container--right--body--users-content">
+    <div style="min-height: 30px">
+      {{#if flashMessages}}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div>{{flashMessages}}</div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {{/if}}
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Full Name</th>
+          <th scope="col">Role</th>
+          <th scope="col">Email</th>
+          <th scope="col">Last Login</th>
+          <th scope="col" style="width: 80px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>{{superAdmin.fname}} {{superAdmin.lname}}</td>
+          <td>Super Admin</td>
+          <td>{{superAdmin.email}}</td>
+          <td>{{superAdmin.last_session}}</td>
+          <td>&nbsp;</td>
+        </tr>
+        {{#each users}}
+        <tr>
+          <td>{{math @index '+' 2}}</td>
+          <td
+            style="cursor: pointer; text-decoration: underline"
+            onclick="window.location.href='/users/details/{{this._id}}'"
+          >
+            {{this.fname}} {{this.lname}}
+          </td>
+          <td>{{this.role}}</td>
+          <td>{{this.email}}</td>
+          <td>{{this.last_session}}</td>
+          <td>
+            <a href="/users/edit/{{this._id}}" style="color: unset"
+              ><i class="fa-regular fa-pen-to-square"></i
+            ></a>
+            <i
+              class="fa-solid fa-trash"
+              style="cursor: pointer"
+              onclick="deleteUser('{{this._id}},{{this.fname}} {{this.lname}}');"
+            ></i>
+            <i
+              class="fa-solid fa-key"
+              style="cursor: pointer"
+              onclick="resetUserPwd('{{this._id}},{{this.fname}} {{this.lname}}')"
+            ></i>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{{> usersForm}} {{> usersPwd}} {{> userDelete}} {{#if error}}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  {{#each errorMsg}}
+  <div
+    id="liveToast"
+    class="toast text-bg-danger border-0"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="toast-header">
+      <strong class="me-auto">Error</strong>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="toast-body">{{this}}</div>
+  </div>
+  {{/each}}
+</div>
+{{! prettier-ignore }}
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', () => {
+    {{#unless pwd}}
+
+    const userModal = document.querySelector('#usersModal');
+    const modal = new bootstrap.Modal(userModal);
+    modal.show();
+
+    {{else}}
+
+    const userPwd = document.querySelector('#usersPwdModal');
+    const modal = new bootstrap.Modal(userPwd);
+    modal.show();
+
+    {{/unless}}
+
+  });
+</script>
+{{/if}} {{#if edit}} {{! prettier-ignore }}
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    const userModal = document.querySelector("#usersModal");
+    const modal = new bootstrap.Modal(userModal);
+    modal.show();
+
+    userModal.addEventListener("hidden.bs.modal", (e) => {
+      console.log("Modal Hidden!!!!!!!");
+      window.location.href = "/users";
+    });
+  });
+</script>
+{{/if}} {{#if details}} {{! prettier-ignore }}
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    const userDetailsModal = document.querySelector("#userDetailsModal");
+    const modal = new bootstrap.Modal(userDetailsModal);
+    modal.show();
+
+    userDetailsModal.addEventListener("hidden.bs.modal", (e) => {
+      window.location.href = "/users";
+    });
+  });
+</script>
+{{/if}} {{> userDetails}}

@@ -20,13 +20,13 @@ let navmenu = [
   {
     title: 'Estimates',
     icon: 'fa-regular fa-file',
-    link: 'estimates',
+    link: 'dashboard',
     active: false,
   },
   {
     title: 'Invoices',
     icon: 'fa-solid fa-file-invoice-dollar',
-    link: 'invoices',
+    link: 'dashboard',
     active: false,
   },
   {

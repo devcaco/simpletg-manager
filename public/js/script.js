@@ -2,14 +2,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('project-simpletg-manager JS imported successfully!');
   console.log(document.querySelector('.toast'));
-  
+
   let card = document.querySelector('.main__container--login--box--left-card');
   let icon = document.querySelector('.info__btn');
-  icon.addEventListener('click', () => {
-    card.classList.toggle('is-flipped');
-    icon.classList.toggle('bi-x-circle');
-    icon.classList.toggle('bi-info-circle');
-  });
+  if (icon) {
+    icon.addEventListener('click', () => {
+      card.classList.toggle('is-flipped');
+      icon.classList.toggle('bi-x-circle');
+      icon.classList.toggle('bi-info-circle');
+    });
+  }
 });
 
 function deleteUser(user) {
@@ -26,15 +28,44 @@ function deleteUser(user) {
   userDelFormUserId.value = user.split(',')[0];
 }
 
-function rotateCard() {
-  
+function confirmLogOut() {
+  return false;
+}
+
+function editProfile() {
+  const profileModal = document.querySelector('#usersProfileModal');
+
+  if (profileModal) {
+    const modal = new bootstrap.Modal(profileModal);
+    modal.show();
+  }
+}
+
+async function saveUserProfile(event) {
+  event.preventDefault();
+  const form = document.querySelector('#usersProfileForm');
+
+  console.log({ form });
+  const formData = new FormData(form);
+
+  try {
+    const response = await axios.post(form.action, formData);
+
+    console.log({ response });
+
+    window.location.href = window.location.href;
+  } catch (err) {
+    console.log({ THERE_WAS_AN_ERROR: err });
+  }
 }
 
 function deleteCustomer(customer) {
   console.log({ customer });
 
   const customerDelForm = document.querySelector('#customerDeleteForm');
-  const customerDelFormCustomerId = document.querySelector('#customerDelFormCustomerId');
+  const customerDelFormCustomerId = document.querySelector(
+    '#customerDelFormCustomerId'
+  );
   const customerDelAlert = document.querySelector('.customerDelAlert_customer');
   customerDelAlert.innerHTML = customer.split(',')[1];
   const customerDelAlertModal = document.querySelector('#customerDelAlert');
@@ -72,7 +103,7 @@ function resetUserPwd(user) {
 function checkPwdMatch(pwdField1, pwdField2) {
   const input1 = document.querySelector(`#${pwdField1}`);
   const input2 = document.querySelector(`#${pwdField2}`);
-  
+
   if (input2.value !== input1.value) {
     input2.setCustomValidity('Passwords Must Match');
   } else {

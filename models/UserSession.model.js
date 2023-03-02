@@ -34,6 +34,11 @@ userSessionSchema.pre('save', async function (next) {
     );
   }
 });
+
+userSessionSchema.virtual('date_login_formated').get(function () {
+  return this.date_login.toLocaleString();
+});
+
 const UserSession = model('UserSession', userSessionSchema);
 
 module.exports = UserSession;
