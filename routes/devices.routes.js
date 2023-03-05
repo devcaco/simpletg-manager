@@ -3,7 +3,6 @@ const router = express.Router();
 const navmenu = require('../utils/navigation');
 // const WorkSheet = require('../models/WorkSheet.model');
 
-const isLoggedOut = require('../middleware/isLoggedOut');
 const isLoggedIn = require('../middleware/isLoggedIn');
 
 router.get('/', isLoggedIn, async (req, res, next) => {

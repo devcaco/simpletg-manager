@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const navmenu = require('../utils/navigation');
 
-const isLoggedOut = require('../middleware/isLoggedOut');
 const isLoggedIn = require('../middleware/isLoggedIn');
 
 const Entity = require('../models/Entity.model');

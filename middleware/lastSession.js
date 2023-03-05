@@ -5,6 +5,7 @@ const lastSession = (req, res, next) => {
   } else if (req.session.superAdmin) {
     req.session.superAdmin.last_session = 'None';
   }
+
   next();
 };
 

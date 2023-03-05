@@ -1,34 +1,16 @@
 // ℹ️ Gets access to environment variables/settings
 // https://www.npmjs.com/package/dotenv
-require('dotenv').config();
 const path = require('path');
+
+require('dotenv').config();
+
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
 const express = require('express');
 // Handles the handlebars
 // https://www.npmjs.com/package/hbs
 const hbs = require('hbs');
-
-hbs.registerHelper('math', function (lvalue, operator, rvalue, options) {
-  lvalue = parseFloat(lvalue);
-  rvalue = parseFloat(rvalue);
-
-  return {
-    '+': lvalue + rvalue,
-  }[operator];
-});
-
-hbs.registerHelper('ifCond', function(v1, v2, options) {
-  if (v1 === v2) {
-    return options.fn(this);
-  } else {
-    return options.inverse(this);
-  }
-});
-
-hbs.registerPartials(path.join(__dirname, 'views/partials/common'));
-hbs.registerPartials(path.join(__dirname, 'views/partials/customers'));
-hbs.registerPartials(path.join(__dirname, 'views/partials/users'));
+require('./config/hbs')(hbs);
 
 const app = express();
 
@@ -43,12 +25,11 @@ const projectName = 'simpletg-manager';
 
 const navmenu = require('./utils/navigation');
 
-app.use(function (req, res, next) {
-  res.locals.session = req.session;
-  next();
-});
-
 app.locals.appTitle = `SIMPLETG MANAGER`;
+
+//  custom MIDDLEWARES
+const resFinished = require('./middleware/resFinished');
+const crashDetect = require('./middleware/crashDetect');
 
 // 👇 Start handling routes here
 const indexRoutes = require('./routes/index.routes');
@@ -57,14 +38,24 @@ const userRoutes = require('./routes/users.routes');
 const customerRoutes = require('./routes/customers.routes');
 const devicesRoutes = require('./routes/devices.routes');
 
+app.use(function (req, res, next) {
+  res.locals.session = req.session;
+
+  let flashMsg = JSON.parse(JSON.stringify([...req.flash('messages')]));
+  res.locals.flashMsg = flashMsg;
+
+  next();
+});
+
+app.use(crashDetect);
+app.use(resFinished);
+
+
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/customers', customerRoutes);
 app.use('/devices', devicesRoutes);
-// app.get('/*', (req, res) => {
-//   res.redirect('/auth/login');
-// });
 
 app.locals.navmenu = navmenu;
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes

@@ -35,7 +35,6 @@ const { lastSession } = require('../middleware/lastSession');
 
 // Middleware configuration
 module.exports = (app) => {
-  // console.log({ MONGO_URI2 });
   // In development environment the app logs
   app.use(logger('dev'));
 

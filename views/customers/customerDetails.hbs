@@ -209,7 +209,7 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="notesSec">
           <button
-            class="accordion-button {{#ifCond section 'notes'}} none {{else}} collapsed {{/ifCond}}"
+            class="accordion-button {{#ifCond section '==' 'notes'}} none {{else}} collapsed {{/ifCond}}"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseNotes"
@@ -221,7 +221,7 @@
         </h2>
         <div
           id="collapseNotes"
-          class="accordion-collapse {{#ifCond section 'notes'}} show {{else}} collapse {{/ifCond}}"
+          class="accordion-collapse {{#ifCond section '==' 'notes'}} show {{else}} collapse {{/ifCond}}"
           aria-labelledby="notesSec"
           data-bs-parent="#customerSubAccordion"
         >
@@ -231,7 +231,7 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="workSheetsSec">
           <button
-            class="accordion-button {{#ifCond section 'workSheets'}} none {{else}} collapsed {{/ifCond}}"
+            class="accordion-button {{#ifCond section '==' 'workSheets'}} none {{else}} collapsed {{/ifCond}}"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseWorksheets"
@@ -243,7 +243,7 @@
         </h2>
         <div
           id="collapseWorksheets"
-          class="accordion-collapse {{#ifCond section 'workSheets'}} show {{else}} collapse {{/ifCond}}"
+          class="accordion-collapse {{#ifCond section '==' 'workSheets'}} show {{else}} collapse {{/ifCond}}"
           aria-labelledby="workSheetsSec"
           data-bs-parent="#customerSubAccordion"
         >
@@ -255,7 +255,7 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="devicesSec">
           <button
-            class="accordion-button {{#ifCond section 'devices'}} none {{else}} collapsed {{/ifCond}}"
+            class="accordion-button {{#ifCond section '==' 'devices'}} none {{else}} collapsed {{/ifCond}}"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseDevices"
@@ -267,7 +267,7 @@
         </h2>
         <div
           id="collapseDevices"
-          class="accordion-collapse {{#ifCond section 'devices'}} show {{else}} collapse {{/ifCond}}"
+          class="accordion-collapse {{#ifCond section '==' 'devices'}} show {{else}} collapse {{/ifCond}}"
           aria-labelledby="devicesSec"
           data-bs-parent="#customerSubAccordion"
         >
@@ -279,7 +279,7 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="documentsSec">
           <button
-            class="accordion-button {{#ifCond section 'documents'}} none {{else}} collapsed {{/ifCond}}"
+            class="accordion-button {{#ifCond section '==' 'documents'}} none {{else}} collapsed {{/ifCond}}"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseDocuments"
@@ -291,7 +291,7 @@
         </h2>
         <div
           id="collapseDocuments"
-          class="accordion-collapse {{#ifCond section 'documents'}} show {{else}} collapse {{/ifCond}}"
+          class="accordion-collapse {{#ifCond section '==' 'documents'}} show {{else}} collapse {{/ifCond}}"
           aria-labelledby="documentsSec"
           data-bs-parent="#customerSubAccordion"
         >

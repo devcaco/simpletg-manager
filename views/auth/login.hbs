@@ -172,12 +172,12 @@
                   >
                     Login
                   </button>
-                  {{#if error}} {{#if login}}
+                  {{#ifCond flashMsg.0.type '==' 'error'}} {{#if login}}
                   <i
                     class="fa-solid fa-triangle-exclamation error_triangle"
                     onclick="showErrors();"
                   ></i>
-                  {{/if}} {{/if}}
+                  {{/if}} {{/ifCond}}
                 </div>
               </form>
             </div>
@@ -306,12 +306,12 @@
                   >
                     Signup
                   </button>
-                  {{#if error}} {{#if signup}}
+                  {{#ifCond flashMsg.0.type '==' 'error'}} {{#if signup}}
                   <i
                     class="fa-solid fa-triangle-exclamation error_triangle"
                     onclick="showErrors();"
                   ></i>
-                  {{/if}} {{/if}}
+                  {{/if}} {{/ifCond}}
                 </div>
               </form>
             </div>

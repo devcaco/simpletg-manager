@@ -3,11 +3,11 @@ const router = express.Router();
 const navmenu = require('../utils/navigation');
 const Customer = require('../models/Customer.model');
 
-const isLoggedOut = require('../middleware/isLoggedOut');
 const isLoggedIn = require('../middleware/isLoggedIn');
 
 /* GET home page */
 router.get('/', isLoggedIn, (req, res, next) => {
+  console.log('REDIRECTING FROM ROOT');
   res.redirect('/dashboard');
 });
 

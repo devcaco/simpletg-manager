@@ -16,11 +16,9 @@ const Entity = require('../models/Entity.model');
 const User = require('../models/User.model');
 const UserSession = require('../models/UserSession.model');
 
-// Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
 const isLoggedOut = require('../middleware/isLoggedOut');
-const isLoggedIn = require('../middleware/isLoggedIn');
 
-router.get('/login/:method?', isLoggedOut, checkLogOff, (req, res) => {
+router.get('/login/:method?', isLoggedOut, checkLogOff, (req, res, next) => {
   if (req.params.method === 'signup')
     res.render('auth/login', { signup: true });
   else {
@@ -31,28 +29,11 @@ router.get('/login/:method?', isLoggedOut, checkLogOff, (req, res) => {
   }
 });
 
-router.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.log({ Error: err });
-      res.status(500).render('auth/login', {
-        login: true,
-        error: true,
-        errorMsg: err,
-      });
-      return;
-    }
-    //req.flash('loginFlash', 'You have successfully logged-off');
-    res.redirect('/auth/login?Off=true');
-  });
-});
-
 router.post('/login', isLoggedOut, async (req, res, next) => {
   const errorMsg = [];
   const { emailLogin: email, pwdLogin: password, rememberMe } = req.body;
 
   try {
-    console.log('LOGGING IN');
     if (!email) errorMsg.push('Validation Error: E-Mail cannot be empty!');
     if (!password) errorMsg.push('Validation Error: Password cannot be empty!');
 
@@ -116,7 +97,12 @@ router.post('/login', isLoggedOut, async (req, res, next) => {
       geo_info: geo,
     });
 
-    res.redirect('/dashboard');
+    req.flash('messages', {
+      type: 'success',
+      message: 'Login successful - Welcome',
+    });
+
+    res.redirect(req.session._bounceTo || '/dashboard');
   } catch (err) {
     console.log({ Error: err });
 
@@ -127,10 +113,12 @@ router.post('/login', isLoggedOut, async (req, res, next) => {
     if (!errorMsg.length) {
       errorMsg.push(err.message);
     }
+
+    let flashMsg = [{ type: 'error', message: errorMsg }];
+
     res.status(500).render('auth/login', {
       login: true,
-      error: true,
-      errorMsg,
+      flashMsg,
       form: { emailLogin: email },
     });
   }
@@ -206,19 +194,30 @@ router.post('/login/signup', isLoggedOut, async (req, res, next) => {
       errorMsg.push(err.message);
     }
 
+    let flashMsg = [{ type: 'error', message: errorMsg }];
+
     res.status(500).render('auth/login', {
       signup: true,
-      error: true,
-      errorMsg,
+      flashMsg,
       form: { entity, fname, lname, emailSignup: email },
     });
   }
 });
 
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) throw err;
+    res.redirect('/auth/login?Off=true');
+  });
+});
+
 function checkLogOff(req, res, next) {
   if (req.query.Off) {
-    console.log('hola');
-    req.flash('loginFlash', 'Sign-Off Successful');
+    req.flash('messages', {
+      type: 'success',
+      message: 'Sign-Off successful - Good bye!',
+    });
+    res.redirect('/auth/login');
   }
   next();
 }

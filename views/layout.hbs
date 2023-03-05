@@ -156,18 +156,18 @@
       {{/unless}} {{/unless}}
     </div>
 
-    {{#if error}}
+    {{#if flashMsg}}
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      {{#each errorMsg}}
+      {{#each flashMsg}}
       <div
         id="liveToast"
-        class="toast text-bg-danger border-0"
+        class="toast {{#ifCond this.type '==' 'error'}} text-bg-danger {{else}} text-bg-success {{/ifCond}} border-0"
         role="alert"
         aria-live="assertive"
         aria-atomic="true"
       >
         <div class="toast-header">
-          <strong class="me-auto">Error</strong>
+          <strong class="me-auto">{{ this.type }}</strong>
           <button
             type="button"
             class="btn-close"
@@ -175,7 +175,7 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="toast-body">{{ this }}</div>
+        <div class="toast-body">{{ this.message }}</div>
       </div>
       {{/each}}
     </div>

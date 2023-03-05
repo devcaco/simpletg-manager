@@ -14,19 +14,6 @@
     </div>
   </div>
   <div class="main__container--right--body--users-content">
-    <div style="min-height: 30px">
-      {{#if flashMessages}}
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <div>{{flashMessages}}</div>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-      {{/if}}
-    </div>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -104,48 +91,39 @@
   </div>
   {{/each}}
 </div>
-{{! prettier-ignore }}
+{{/if}} {{! prettier-ignore }}
 <script type="text/javascript">
   document.addEventListener('DOMContentLoaded', () => {
-    {{#unless pwd}}
-
-    const userModal = document.querySelector('#usersModal');
-    const modal = new bootstrap.Modal(userModal);
-    modal.show();
-
-    {{else}}
+    {{#if pwd}}
 
     const userPwd = document.querySelector('#usersPwdModal');
-    const modal = new bootstrap.Modal(userPwd);
-    modal.show();
+    const modalPwd = new bootstrap.Modal(userPwd);
+    modalPwd.show();
 
-    {{/unless}}
+    {{/if}}
 
-  });
-</script>
-{{/if}} {{#if edit}} {{! prettier-ignore }}
-<script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", () => {
+    {{#ifCond edit '||' error}}
+    {{#unless pwd}}
     const userModal = document.querySelector("#usersModal");
-    const modal = new bootstrap.Modal(userModal);
-    modal.show();
+    const modalUsr = new bootstrap.Modal(userModal);
+    modalUsr.show();
 
     userModal.addEventListener("hidden.bs.modal", (e) => {
-      console.log("Modal Hidden!!!!!!!");
       window.location.href = "/users";
     });
-  });
-</script>
-{{/if}} {{#if details}} {{! prettier-ignore }}
-<script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", () => {
+    {{/unless}}
+    {{/ifCond}}
+
+    {{#if details}}
     const userDetailsModal = document.querySelector("#userDetailsModal");
-    const modal = new bootstrap.Modal(userDetailsModal);
-    modal.show();
+    const modalDetails = new bootstrap.Modal(userDetailsModal);
+    modalDetails.show();
 
     userDetailsModal.addEventListener("hidden.bs.modal", (e) => {
       window.location.href = "/users";
     });
+    {{/if}}
+
   });
 </script>
-{{/if}} {{> userDetails}}
+{{> userDetails}}

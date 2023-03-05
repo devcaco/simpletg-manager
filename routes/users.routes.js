@@ -10,12 +10,8 @@ const mongoose = require('mongoose');
 const saltRounds = 10;
 
 // Require the User model in order to interact with the database
-const Entity = require('../models/Entity.model');
 const User = require('../models/User.model');
-const Session = require('../models/UserSession.model');
 
-// Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
-const isLoggedOut = require('../middleware/isLoggedOut');
 const isLoggedIn = require('../middleware/isLoggedIn');
 
 const navmenu = require('../utils/navigation');
@@ -25,54 +21,59 @@ const rolesOptions = [
   { title: 'User', selected: false },
 ];
 
-router.get('/', isLoggedIn, async (req, res, next) => {
+router.get('/', isLoggedIn, getUsers, async (req, res, next) => {
   navmenu.forEach((elem) => (elem.active = elem.title === 'Users'));
 
-  const users = await getUsers(req);
-
-  res.render('users/users', {
-    superAdmin: req.session.superAdmin,
-    users,
-    rolesOptions,
-    flashMessages: req.flash('userFlash'),
-  });
-});
-
-router.get('/edit/:id', isLoggedIn, async (req, res, next) => {
-  const users = await getUsers(req);
+  const users = req.users;
 
   try {
-    let user = '';
-    if (req.params.id) user = await User.findById(req.params.id);
+    res.render('users/users', {
+      superAdmin: req.session.superAdmin,
+      users,
+      rolesOptions,
+    });
+  } catch (err) {
+    err.errorIn = 'User ---> User GET Route';
+    next(err);
+  }
+});
 
-    if (!user) throw new Error('User Not Found');
+router.get('/edit/:id', isLoggedIn, getUsers, async (req, res, next) => {
+  const users = req.users;
+  let userId = req.params.id;
+  let errorMsg = [];
+  try {
+    if (!userId) throw new Error('No userId Provided');
+    const user = await User.findById(userId);
+    if (!user) throw new Error('User not found');
 
-    const form = { ...user };
+    const form = { ...user._doc };
     rolesOptions.forEach(
-      (elRole) => (elRole.selected = form._doc.role === elRole.title)
+      (elRole) => (elRole.selected = form.role === elRole.title)
     );
 
     res.render('users/users', {
       edit: true,
-      form: form._doc,
+      form,
       rolesOptions,
       users,
       superAdmin: req.session.superAdmin,
     });
   } catch (err) {
-    console.log({ error: err });
+    err.errorIn = 'Users ---> Edit GET Route';
+    next(err);
   }
 });
 
-router.get('/details/:id', isLoggedIn, async (req, res, next) => {
-  const users = await getUsers(req);
-  const errorMsg = [];
+router.get('/details/:id', isLoggedIn, getUsers, async (req, res, next) => {
+  const users = req.users;
   const userId = req.params.id;
+  const errorMsg = [];
   try {
-    console.log('GETTING USERS DETAILS');
-    if (!userId) errorMsg.push('No user ID provided');
+    if (!userId) errorMsg.push('No userId provided');
+
     const user = await User.findById(userId);
-    if (!user) errorMsg.push('No user found with that ID');
+    if (!user) errorMsg.push('User not found');
 
     if (errorMsg.length) throw new Error(errorMsg);
 
@@ -91,8 +92,7 @@ router.get('/details/:id', isLoggedIn, async (req, res, next) => {
       superAdmin: req.session.superAdmin,
     });
   } catch (err) {
-    console.log({ error: err });
-
+    err.errorIn = 'User ---> Details GET route';
     next(err);
   }
 });
@@ -100,36 +100,33 @@ router.get('/details/:id', isLoggedIn, async (req, res, next) => {
 router.post('/delete', isLoggedIn, async (req, res, next) => {
   const userId = req.body.userId;
   const errorMsg = [];
-  const users = await getUsers(req);
 
   try {
-    console.log('Deleting User');
-    console.log({ userId });
-    if (!userId) errorMsg.push('User Not Found');
+    if (!userId) errorMsg.push('No userId provided');
 
     const delUser = await User.findByIdAndDelete(userId);
 
     if (errorMsg.length) throw new Error(errorMsg);
-    req.flash('userFlash', 'The user was successfully deleted');
+    req.flash('messages', {
+      type: 'success',
+      title: 'User Deleted',
+      message: 'User successfully deleted',
+    });
     res.redirect('/users');
   } catch (err) {
-    console.log({ error: err });
-    if (!errorMsg.length) errorMsg.push(err.message);
-
-    res.status(500).render('users/users', { error: true, errorMsg });
+    err.errorIn = 'USER ---> User delete POST route';
+    next(err);
   }
 });
 
-router.post('/pwd', isLoggedIn, async (req, res, next) => {
+router.post('/pwd', isLoggedIn, getUsers, async (req, res, next) => {
   const { userId, password, password2, username } = req.body;
   const errorMsg = [];
-  const users = await getUsers(req);
+  const users = req.users;
 
   try {
-    console.log('Resetting Pwd');
-    console.log({ userId });
-
-    if (!password || !password2) errorMsg.push('Required Fields are empty');
+    if (!password || !password2)
+      errorMsg.push('Required fields are empty, please provide all fields');
     if (password !== password2) errorMsg.push('Passwords do not match');
 
     if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(password)) {
@@ -138,30 +135,38 @@ router.post('/pwd', isLoggedIn, async (req, res, next) => {
       );
     }
 
+    if (!userId) errorMsg.push('No UserID Provided');
+
     const user = await User.findById(userId);
 
-    if (!user || !userId) errorMsg.push('User Not Found');
+    if (!user) errorMsg.push('User Not Found');
 
     if (errorMsg.length) throw new Error(errorMsg);
 
     const salt = await bcryptjs.genSalt(saltRounds);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    const data = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       { password: hashedPassword },
       { runValidators: true, new: true, context: 'query', unique: true }
     );
-    req.flash('userFlash', `The user's password was successfully updated`);
+
+    req.flash('messages', {
+      type: 'success',
+      title: 'User Updated',
+      message: `User's password successfully updated`,
+    });
     res.redirect('/users');
   } catch (err) {
-    console.log({ error: err });
+    err.errorIn = 'User ----> pwd POST route';
+    console.log('ERROR IN USER -> ', err);
     if (!errorMsg.length) errorMsg.push(err.message);
 
     res.status(500).render('users/users', {
       error: true,
-      errorMsg,
       pwd: true,
+      errorMsg,
       users,
       superAdmin: req.session.superAdmin,
       form: { userId, username },
@@ -209,16 +214,15 @@ router.post(
   }
 );
 
-router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
+router.post('/edit/:id', isLoggedIn, getUsers, async (req, res, next) => {
   const { userId, fname, lname, email, role } = req.body;
+  const users = req.users;
   const errorMsg = [];
-  const users = await getUsers(req);
 
   try {
-    console.log('Updating User Information');
     if (!userId || !fname || !lname || !email || !role) {
       errorMsg.push(
-        'Validation Error: There are required fields empty. Please fill all required fields.'
+        'Validation Error: Required fields empty. Please provide all required fields.'
       );
     }
     if (errorMsg.length) throw new Error(errorMsg);
@@ -239,11 +243,15 @@ router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
       }
     );
 
-    req.flash('userFlash', `The user was successfully updated`);
+    req.flash('messages', {
+      type: 'success',
+      title: 'User Updated',
+      message: `User successfully updated`,
+    });
     res.redirect('/users');
   } catch (err) {
-    console.log({ error: err });
-
+    err.errorIn = 'User ----> edit POST route';
+    console.log('ERROR IN USER -> ', err);
     if (err instanceof mongoose.Error.ValidationError) {
       errorMsg.push(err.message);
     }
@@ -266,22 +274,21 @@ router.post('/edit/:id', isLoggedIn, async (req, res, next) => {
         role,
       },
       users,
-      entityUser: req.session.entityUser,
+      superAdmin: req.session.superAdmin,
       rolesOptions,
     });
   }
 });
 
-router.post('/', isLoggedIn, async (req, res, next) => {
+router.post('/', isLoggedIn, getUsers, async (req, res, next) => {
   const { fname, lname, email, password, password2, role } = req.body;
+  const users = req.users;
   const errorMsg = [];
-  const users = await getUsers(req);
+
   try {
-    console.log('Adding new User');
-    console.log({ body: req.body });
     if (!fname || !lname || !email || !password || !password2 || !role) {
       errorMsg.push(
-        'Validation Error: There are required fields empty. Please fill all required fields.'
+        'Validation Error: Required fields empty. Please provide all required fields.'
       );
     }
 
@@ -293,7 +300,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 
     if (password !== password2) {
       errorMsg.push(
-        'Password fields do not match. Please make sure to confirm the correct password'
+        'Password fields do not match. Please make sure to re-type the correct password'
       );
     }
 
@@ -302,9 +309,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     const salt = await bcryptjs.genSalt(saltRounds);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    console.log({ salt, hashedPassword });
-
-    let data = await User.create({
+    let newUser = await User.create({
       entity: req.session.entity._id,
       fname,
       lname,
@@ -313,11 +318,15 @@ router.post('/', isLoggedIn, async (req, res, next) => {
       role,
     });
 
-    console.log({ data });
-    req.flash('userFlash', `The user was successfully created`);
-    res.redirect('./users');
+    req.flash('messages', {
+      type: 'success',
+      title: 'User Created',
+      message: `User successfully created`,
+    });
+    res.redirect('/users');
   } catch (err) {
-    console.log({ error: err });
+    err.errorIn = 'User ----> Creating new user POST route';
+    console.log('ERROR IN USER -> ', err);
 
     if (err instanceof mongoose.Error.ValidationError) {
       errorMsg.push(err.message);
@@ -328,7 +337,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     }
 
     rolesOptions.forEach((elRole) => (elRole.selected = role === elRole.title));
-    console.log({ role, rolesOptions });
+
     res.status(500).render('users/users', {
       error: true,
       errorMsg,
@@ -345,25 +354,29 @@ router.post('/', isLoggedIn, async (req, res, next) => {
   }
 });
 
-const getUsers = async (req) => {
-  const users = await User.find({
-    entity: req.session.entity._id,
-    role: { $ne: 'Super Admin' },
-  }).populate({
-    path: 'sessions',
-    options: {
-      sort: { date_login: 'desc' },
-      limit: 5,
-    },
-  });
-
-  users.forEach((user) => {
-    if (user.sessions.length)
-      user.last_session = user.sessions[0].date_login.toLocaleString();
-    else user.last_session = 'None';
-  });
-
-  return users;
-};
+async function getUsers(req, res, next) {
+  try {
+    const users = await User.find({
+      entity: req.session.entity._id,
+      role: { $ne: 'Super Admin' },
+    }).populate({
+      path: 'sessions',
+      options: {
+        sort: { date_login: 'desc' },
+        limit: 5,
+      },
+    });
+    users.forEach((user) => {
+      if (user.sessions.length)
+        user.last_session = user.sessions[0].date_login.toLocaleString();
+      else user.last_session = 'None';
+    });
+    req.users = users;
+    next();
+  } catch (err) {
+    err.errorIn = 'Users --> getUsers() middleware';
+    next(err);
+  }
+}
 
 module.exports = router;
